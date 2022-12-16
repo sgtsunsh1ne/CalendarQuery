@@ -25,12 +25,11 @@ namespace CalendarQuery
             var attendees = await a.GetAttendeesAsync();
             var filePath = DateTime.Now.ToString("yyyy-MM-dd-HHmmss");
 
-            var rosteredEvents = contents
-                .GetCalendars()
+            var rosteredEvents = contents.GetCalendars()
                 .SelectMany(i => i.Value.Events)
                 .Where(i => i.FilterByMonth(month))
                 .Where(i => i.FilterByAttendees(attendees))
-                .Select(i => new RosteredEvent(i));
+                .Select(i => new RosteredEvent(i, month));
             
             contents.WriteToDisk(filePath);
         }
