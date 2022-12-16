@@ -32,6 +32,7 @@ namespace CalendarQuery
                 .Select(i => new RosteredEvent(i, month));
             
             contents.WriteToDisk(filePath);
+            rosteredEvents.WriteToConsole();
         }
     }
 }

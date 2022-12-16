@@ -6,6 +6,9 @@ using System.Linq;
 using System.Net.Mime;
 using System.Threading.Tasks;
 using EmailValidation;
+using Humanizer;
+using Humanizer.Localisation;
+using Spectre.Console;
 
 namespace CalendarQuery
 {   
@@ -115,6 +118,37 @@ namespace CalendarQuery
             return lines
                 .Where(email => EmailValidator.Validate(email))
                 .ToList();
+        }
+
+        public static Table GenerateConsoleTable(this IEnumerable<RosteredEvent> items)
+        {
+            var scheduleTable = new Table();
+
+            scheduleTable.AddColumns(
+                "Attendees",
+                "ActualStartDate",
+                "ActualEndDate",
+                "ActualDuration");
+            
+            scheduleTable.Columns[3].RightAligned();
+            
+            foreach (var e in items)
+            {
+                scheduleTable.AddRow(
+                    e.Attendees,
+                    e.StartDateLocal.ToString("ddd dd MMM yy HH:mm tt"),
+                    e.EndDateLocal.ToString("ddd dd MMM yy HH:mm tt"),
+                    e.ActualDuration.Humanize(maxUnit: TimeUnit.Day, precision: 3)
+                );
+            }
+
+            return scheduleTable;
+        }
+        
+        public static void WriteToConsole(this IEnumerable<RosteredEvent> items)
+        {
+            var table = items.GenerateConsoleTable();
+            AnsiConsole.Write(table);
         }
     }
 }

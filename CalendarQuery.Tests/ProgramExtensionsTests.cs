@@ -1,9 +1,12 @@
 using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Flurl.Http.Testing;
 using Flurl.Util;
+using Calendar = Ical.Net.Calendar;
 
 namespace CalendarQuery.Tests
 {
@@ -80,7 +83,7 @@ namespace CalendarQuery.Tests
             
             contents.WriteToDisk(path);
             
-            Assert.True(File.Exists(filePath));
+            Assert.IsTrue(File.Exists(filePath));
             
             Directory.Delete(path, true);
         }
@@ -117,6 +120,33 @@ namespace CalendarQuery.Tests
             CollectionAssert.Contains(users, "user1@some.random.email.com");
             CollectionAssert.Contains(users, "user2@some.random.email.com");
             CollectionAssert.Contains(users, "user3@hello.com");
+        }
+        
+        [Test]
+        public void GenerateConsoleTable_Works()
+        {
+            var month     = 11;
+            var monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month);
+            var input     = "SampleData/sample-ics-with-valid-events.ics";
+
+            using var calendarReader = new StreamReader(input);
+
+            var calendars = new Dictionary<string, Calendar>
+            {
+                {"sample.ics", Calendar.Load(calendarReader)}
+            };
+
+            var roster = calendars
+                .SelectMany(i => i.Value.Events)
+                .Select(i => new RosteredEvent(i, month));
+
+            var table = roster.GenerateConsoleTable();
+
+            var tableContainsRows = table.Rows.Any();
+            var tableColumnCount  = table.Columns.Count;
+            
+            Assert.IsTrue(tableContainsRows);
+            Assert.That(tableColumnCount, Is.EqualTo(4));
         }
     }
 }
