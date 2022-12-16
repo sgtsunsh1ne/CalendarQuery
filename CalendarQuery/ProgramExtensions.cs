@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Mime;
 using System.Threading.Tasks;
+using Ical.Net;
 
 namespace CalendarQuery
 {   
@@ -94,6 +95,11 @@ namespace CalendarQuery
             {
                 File.WriteAllTextAsync($"{path}/{filename}", content);
             }
+        }
+        
+        public static Dictionary<string, Calendar> GetCalendars(this Dictionary<string, string> contents)
+        {
+            return contents.ToDictionary(i => i.Key, i => Calendar.Load(i.Value));
         }
     }
 }

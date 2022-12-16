@@ -19,6 +19,8 @@ namespace CalendarQuery
         {
             var contents = await c.GetUrlContentsAsync();
             var filePath = DateTime.Now.ToString("yyyy-MM-dd-HHmmss");
+            var calendars = contents.GetCalendars();
+            
             contents.WriteToDisk(filePath);
         }
     }
