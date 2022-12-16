@@ -10,7 +10,7 @@ namespace CalendarQuery.Tests
             ICollection<Attendee> attendees, string expectedAttendees)
         {
             var result = attendees.SanitiseAttendees();
-            Assert.AreEqual(expectedAttendees, result);
+            Assert.That(result, Is.EquivalentTo(expectedAttendees));
         }
         
         public static IEnumerable<object[]> AttendeeData =>

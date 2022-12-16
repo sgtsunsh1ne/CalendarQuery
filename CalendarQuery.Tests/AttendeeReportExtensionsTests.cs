@@ -33,9 +33,9 @@ namespace CalendarQuery.Tests
                 .SelectMany(i => i.Value.Events)
                 .Where(i => i.FilterByMonth(11))
                 .ToList();
-
-            Assert.AreEqual(6, calendars.First().Value.Events.Count); // Before Filter
-            Assert.AreEqual(4, events.Count); // After Filter
+            
+            Assert.That(calendars.First().Value.Events.Count, Is.EqualTo(6)); // Before filter
+            Assert.That(events.Count, Is.EqualTo(4)); // After filter
         }
         
         [Test]
@@ -51,9 +51,9 @@ namespace CalendarQuery.Tests
                 .SelectMany(i => i.Value.Events)
                 .Where(e => e.FilterByAttendees(new List<string> {"user.one@contoso.com"}))
                 .ToList();
-
-            Assert.AreEqual(6, calendars.First().Value.Events.Count); // Before Filter
-            Assert.AreEqual(2, events.Count); // After Filter
+            
+            Assert.That(calendars.First().Value.Events.Count, Is.EqualTo(6)); // Before filter
+            Assert.That(events.Count, Is.EqualTo(2)); // After filter
         }
     }
 }

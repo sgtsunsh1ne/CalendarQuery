@@ -14,7 +14,7 @@ namespace CalendarQuery.Tests
         {
             var input = "SampleData/sample-calendars.txt";
             var contents  = await input.GetUrlContentsAsync();
-            Assert.AreEqual(3, contents.Count);
+            Assert.That(contents.Count, Is.EqualTo(3));
         }
 
         [Test]
@@ -22,7 +22,7 @@ namespace CalendarQuery.Tests
         {
             var url = "https://raw.githubusercontent.com/sohnemann/New-Zealand-Public-Holidays/main/2022-2032-public-holidays-nz-all.ics";
             var contents = await url.GetUrlContentsAsync();
-            Assert.AreEqual("2022-2032-public-holidays-nz-all.ics", contents.First().Key);
+            Assert.That(contents.First().Key, Is.EqualTo("2022-2032-public-holidays-nz-all.ics"));
         }
         
         [Test]
@@ -41,7 +41,7 @@ namespace CalendarQuery.Tests
             var url = "https://random-url.com";
             var contents = await url.GetUrlContentsAsync();
             
-            Assert.AreEqual(expectedFileName, contents.First().Key);
+            Assert.That(contents.First().Key, Is.EqualTo(expectedFileName));
         }
         
         [Test]
@@ -58,7 +58,7 @@ namespace CalendarQuery.Tests
                 await url.GetUrlContentsAsync();
             });
             
-            Assert.AreEqual($"Unable to determine filename from {url}", ex?.Message);
+            Assert.That(ex?.Message, Is.EqualTo($"Unable to determine filename from {url}"));
         }
 
         [Test]
@@ -102,7 +102,7 @@ namespace CalendarQuery.Tests
             
             var users = input.GetAttendeesAsync().Result.ToList();
             
-            Assert.AreEqual(1, users.Count);
+            Assert.That(users.Count, Is.EqualTo(1));
             CollectionAssert.Contains(users, input);
         }
 
@@ -113,7 +113,7 @@ namespace CalendarQuery.Tests
             
             var users = await input.GetAttendeesAsync();
             
-            Assert.AreEqual(3, users.ToList().Count);
+            Assert.That(users.ToList().Count, Is.EqualTo(3));
             CollectionAssert.Contains(users, "user1@some.random.email.com");
             CollectionAssert.Contains(users, "user2@some.random.email.com");
             CollectionAssert.Contains(users, "user3@hello.com");

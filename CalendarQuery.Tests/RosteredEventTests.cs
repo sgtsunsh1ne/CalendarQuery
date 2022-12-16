@@ -17,10 +17,10 @@ namespace CalendarQuery.Tests
 
             var sut = new RosteredEvent(calendarEvent, It.IsAny<int>());
             
-            Assert.AreEqual(calendarEvent.DtStart.AsSystemLocal, sut.StartDateLocal);
-            Assert.AreEqual(calendarEvent.DtEnd.AsSystemLocal, sut.EndDateLocal);
-            Assert.AreEqual(calendarEvent.Duration, sut.ActualDuration);
-            Assert.AreEqual("user.one@contoso.com", sut.Attendees);
+            Assert.That(sut.StartDateLocal, Is.EqualTo(calendarEvent.DtStart.AsSystemLocal));
+            Assert.That(sut.EndDateLocal, Is.EqualTo(calendarEvent.DtEnd.AsSystemLocal));
+            Assert.That(sut.ActualDuration, Is.EqualTo(calendarEvent.Duration));
+            Assert.That(sut.Attendees, Is.EqualTo("user.one@contoso.com"));
         }
         
         [TestCaseSource(nameof(ExpectedAdjustedStartDates))]
@@ -30,9 +30,9 @@ namespace CalendarQuery.Tests
             
             var ev = new RosteredEvent(calendarEvent, month);
             
-            Assert.AreEqual(
-                expectedStartDate.ToString("yyyy-MM-dd HHmmss"), 
-                ev.AdjustedStartDateLocal.ToString("yyyy-MM-dd HHmmss"));
+            Assert.That(
+                ev.AdjustedStartDateLocal.ToString("yyyy-MM-dd HHmmss"),
+                Is.EqualTo(expectedStartDate.ToString("yyyy-MM-dd HHmmss")));
         }
 
         [TestCaseSource(nameof(ExpectedAdjustedEndDates))]
@@ -42,9 +42,9 @@ namespace CalendarQuery.Tests
             
             var ev = new RosteredEvent(calendarEvent, month);
             
-            Assert.AreEqual(
-                expectedEndDate.ToString("yyyy-MM-dd HHmmss"), 
-                ev.AdjustedEndDateLocal.ToString("yyyy-MM-dd HHmmss"));
+            Assert.That(
+                ev.AdjustedEndDateLocal.ToString("yyyy-MM-dd HHmmss"),
+                Is.EqualTo(expectedEndDate.ToString("yyyy-MM-dd HHmmss")));
         }
 
         public static IEnumerable<object[]> ExpectedAdjustedStartDates =>

@@ -5,7 +5,7 @@ using Ical.Net.DataTypes;
 
 namespace CalendarQuery.Tests
 {
-    public class Utility
+    public static class Utility
     {
         public static CalendarEvent CalendarEvent(string start, string end)
         {
