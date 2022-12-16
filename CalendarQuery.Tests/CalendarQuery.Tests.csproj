@@ -29,6 +29,9 @@
       <None Update="SampleData\sample-calendars.txt">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
+      <None Update="SampleData\sample-ics-with-valid-events.ics">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
     <ItemGroup>
