@@ -128,7 +128,10 @@ namespace CalendarQuery
                 "Attendees",
                 "ActualStartDate",
                 "ActualEndDate",
-                "ActualDuration");
+                "ActualDuration",
+                "AdjustedStartDate",
+                "AdjustedEndDate",
+                "AdjustedDuration");
             
             scheduleTable.Columns[3].RightAligned();
             
@@ -138,7 +141,10 @@ namespace CalendarQuery
                     e.Attendees,
                     e.StartDateLocal.ToString("ddd dd MMM yy HH:mm tt"),
                     e.EndDateLocal.ToString("ddd dd MMM yy HH:mm tt"),
-                    e.ActualDuration.Humanize(maxUnit: TimeUnit.Day, precision: 3)
+                    e.ActualDuration.Humanize(maxUnit: TimeUnit.Day, precision: 3),
+                    e.AdjustedStartDateLocal.ToString("ddd dd MMM yy HH:mm tt"),
+                    e.AdjustedEndDateLocal.ToString("ddd dd MMM yy HH:mm tt"),
+                    e.AdjustedDuration.Humanize(maxUnit: TimeUnit.Day, minUnit: TimeUnit.Day, precision: 3)
                 );
             }
 

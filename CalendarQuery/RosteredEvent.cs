@@ -13,11 +13,11 @@ namespace CalendarQuery
             _calendarEvent = calendarEvent;
             _month = month;
         }
-
+        
+        public string Attendees => _calendarEvent.Attendees.SanitiseAttendees();
         public DateTime StartDateLocal => _calendarEvent.Start.AsSystemLocal;
         public DateTime EndDateLocal => _calendarEvent.End.AsSystemLocal;
         public TimeSpan ActualDuration => _calendarEvent.Duration;
-        public string Attendees => _calendarEvent.Attendees.SanitiseAttendees();
         
         public DateTime AdjustedStartDateLocal
         {
@@ -70,5 +70,7 @@ namespace CalendarQuery
                 return EndDateLocal;
             }
         }
+
+        public TimeSpan AdjustedDuration => AdjustedStartDateLocal.Subtract(AdjustedEndDateLocal).RoundToNearestDay();
     }
 }

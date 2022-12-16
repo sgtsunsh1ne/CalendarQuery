@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
@@ -19,6 +20,13 @@ namespace CalendarQuery.Tests
                 Start = new CalDateTime(startDate),
                 End = new CalDateTime(endDate)
             };
+        }
+
+        public static CalendarEvent CalendarEvent(string start, string end, string attendee)
+        {
+            var calendarEvent = CalendarEvent(start, end);
+            calendarEvent.Attendees = new List<Attendee> {new($"mailto:{attendee}")};
+            return calendarEvent;
         }
     }
 }

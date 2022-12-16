@@ -146,7 +146,7 @@ namespace CalendarQuery.Tests
             var tableColumnCount  = table.Columns.Count;
             
             Assert.IsTrue(tableContainsRows);
-            Assert.That(tableColumnCount, Is.EqualTo(4));
+            Assert.That(tableColumnCount, Is.EqualTo(7));
         }
     }
 }

@@ -37,7 +37,16 @@ namespace CalendarQuery.Tests
             Assert.That(calendars.First().Value.Events.Count, Is.EqualTo(6)); // Before filter
             Assert.That(events.Count, Is.EqualTo(4)); // After filter
         }
-        
+
+        [Test]
+        public void FilterByMonth_WillNotPickUpEventsThatSpanMultipleMonths()
+        {
+            var ce1 = Utility.CalendarEvent("28 Nov 22 00:00 AM", "28 Jan 23 00:00 AM");
+            var results = ce1.FilterByMonth(12); // December
+            Assert.That(results, Is.False);
+        }
+
+
         [Test]
         public async Task FilterByAttendees_WhenAttendeeListProvided_ThenOnlyReturnEventsAttendedByAttendee()
         {

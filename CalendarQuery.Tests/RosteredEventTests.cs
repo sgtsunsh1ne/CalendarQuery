@@ -1,136 +1,129 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using Humanizer;
+using Humanizer.Localisation;
 using Ical.Net.CalendarComponents;
-using Ical.Net.DataTypes;
-using Moq;
 
 namespace CalendarQuery.Tests
 {
     public class RosteredEventTests
     {
-        [Test]
-        public void RosteredEvent_ExtractsDataFromCalendarEventCorrectly()
+        [TestCaseSource(nameof(ExpectedRosteredEvents))]
+        public void RosteredEvent_ExtractsDataFromCalendarEventCorrectly(
+            CalendarEvent calendarEvent, 
+            string expectedAttendee,
+            string expectedAdjustedStartDate,
+            string expectedAdjustedEndDate,
+            string expectedAdjustedDuration,
+            string monthName)
         {
-            var calendarEvent = Utility.CalendarEvent("01 Dec 22 00:00 AM", "10 Dec 22 00:00 AM");
-            calendarEvent.Attendees = new List<Attendee> {new("mailto:user.one@contoso.com")};
-
-            var sut = new RosteredEvent(calendarEvent, It.IsAny<int>());
+            var month = DateTime.ParseExact(monthName, "MMMM", CultureInfo.CurrentCulture).Month;
             
+            var sut = new RosteredEvent(calendarEvent, month);
+
             Assert.That(sut.StartDateLocal, Is.EqualTo(calendarEvent.DtStart.AsSystemLocal));
             Assert.That(sut.EndDateLocal, Is.EqualTo(calendarEvent.DtEnd.AsSystemLocal));
             Assert.That(sut.ActualDuration, Is.EqualTo(calendarEvent.Duration));
-            Assert.That(sut.Attendees, Is.EqualTo("user.one@contoso.com"));
-        }
-        
-        [TestCaseSource(nameof(ExpectedAdjustedStartDates))]
-        public void AdjustedStartDateLocal_DeterminesTheCorrectStartDate(CalendarEvent calendarEvent, DateTime expectedStartDate, string monthName)
-        {
-            var month = DateTime.ParseExact(monthName, "MMMM", CultureInfo.CurrentCulture).Month;
-            
-            var ev = new RosteredEvent(calendarEvent, month);
+            Assert.That(sut.Attendees, Is.EqualTo(expectedAttendee));
             
             Assert.That(
-                ev.AdjustedStartDateLocal.ToString("yyyy-MM-dd HHmmss"),
-                Is.EqualTo(expectedStartDate.ToString("yyyy-MM-dd HHmmss")));
-        }
-
-        [TestCaseSource(nameof(ExpectedAdjustedEndDates))]
-        public void AdjustedEndDateLocal_DeterminesTheCorrectEndDate(CalendarEvent calendarEvent, DateTime expectedEndDate, string monthName)
-        {
-            var month = DateTime.ParseExact(monthName, "MMMM", CultureInfo.CurrentCulture).Month;
-            
-            var ev = new RosteredEvent(calendarEvent, month);
+                sut.AdjustedStartDateLocal.ToString("dd MMM yy HH:mm tt"),  
+                Is.EqualTo(expectedAdjustedStartDate));
             
             Assert.That(
-                ev.AdjustedEndDateLocal.ToString("yyyy-MM-dd HHmmss"),
-                Is.EqualTo(expectedEndDate.ToString("yyyy-MM-dd HHmmss")));
+                sut.AdjustedEndDateLocal.ToString("dd MMM yy HH:mm tt"),  
+                Is.EqualTo(expectedAdjustedEndDate));
+
+            Assert.That(
+                sut.AdjustedDuration.Humanize(maxUnit:TimeUnit.Day, minUnit:TimeUnit.Day),
+                Is.EqualTo(expectedAdjustedDuration));
         }
 
-        public static IEnumerable<object[]> ExpectedAdjustedStartDates =>
+        public static IEnumerable<object[]> ExpectedRosteredEvents =>
             new List<object[]>
             {
+                // Standard 7-day scenario
                 new object[]
-                { 
-                    // If event starts from previous month and ends in current month
-                    // Then adjust start date to 1st day of current month
-                    Utility.CalendarEvent("15 Nov 22 10:00 AM", "24 Dec 22 10:00 AM"),
-                    DateTime.Parse("01 Dec 22 10:00 AM"),
+                {
+                    Utility.CalendarEvent("01 Dec 22 00:00 AM", "08 Dec 22 00:00 AM", "user1@contoso.com"),
+                    "user1@contoso.com",
+                    "01 Dec 22 00:00 AM",
+                    "08 Dec 22 00:00 AM",
+                    "7 days",
                     "December"
                 },
+                
+                // If event starts from previous month and ends in current month
+                // Then AdjustedDuration is 4 days because StartDateLocal has been adjusted to 1st day of month
                 new object[]
-                { 
-                    // If event starts and ends in current month
-                    // Then start date requires no adjustment
-                    Utility.CalendarEvent("19 Dec 22 10:30 AM", "24 Dec 22 10:00 AM"),
-                    DateTime.Parse("19 Dec 22 10:30 AM"),
+                {
+                    Utility.CalendarEvent("28 Nov 22 08:30 AM", "05 Dec 22 08:30 AM", "user1@contoso.com"),
+                    "user1@contoso.com",
+                    "01 Dec 22 08:30 AM",
+                    "05 Dec 22 08:30 AM",
+                    "4 days",
                     "December"
                 },
+                
+                // If event starts in current month and ends in next month
+                // Then AdjustedDuration is 6 days because EndDateLocal has been adjusted to 1st day of month
                 new object[]
-                { 
-                    // If event starts in current month and ends next month
-                    // Then start date requires no adjustment
-                    Utility.CalendarEvent("19 Dec 22 10:30 AM", "24 Jan 22 10:00 AM"),
-                    DateTime.Parse("19 Dec 22 10:30 AM"),
+                {
+                    Utility.CalendarEvent("26 Dec 22 08:30 AM", "02 Jan 23 08:30 AM", "user1@contoso.com"),
+                    "user1@contoso.com",
+                    "26 Dec 22 08:30 AM",
+                    "01 Jan 23 08:30 AM",
+                    "6 days",
                     "December"
                 },
+                
+                // If attendee worked 6 days 23 hours
+                // Then AdjustedDuration is 7 days
                 new object[]
                 {
-                    // Midnight test
-                    Utility.CalendarEvent("20 Nov 22 00:00 AM", "24 Dec 22 00:00 AM"),
-                    DateTime.Parse("01 Dec 22 00:00 AM"),
+                    Utility.CalendarEvent("19 Dec 22 00:00 AM", "25 Dec 22 23:00 PM", "user1@contoso.com"),
+                    "user1@contoso.com",
+                    "19 Dec 22 00:00 AM",
+                    "25 Dec 22 23:00 PM",
+                    "7 days",
                     "December"
                 },
+                
+                // If attendee worked 6 days 12 hours
+                // Then AdjustedDuration is 7 days
                 new object[]
                 {
-                    // Leap year test
-                    Utility.CalendarEvent("20 Jan 20 08:00 AM", "15 Feb 20 08:30 AM"),
-                    DateTime.Parse("01 Feb 20 08:00 AM"),
-                    "February"
-                }
-            };
-        
-        
-        public static IEnumerable<object[]> ExpectedAdjustedEndDates =>
-            new List<object[]>
-            {
-                new object[]
-                {
-                    // If event starts and ends in current month
-                    // Then end date requires no adjustment
-                    Utility.CalendarEvent("19 Dec 22 10:00 AM", "24 Dec 22 10:00 AM"),
-                    DateTime.Parse("24 Dec 22 10:00 AM"), 
+                    Utility.CalendarEvent("19 Dec 22 00:00 AM", "25 Dec 22 12:00 PM", "user1@contoso.com"),
+                    "user1@contoso.com",
+                    "19 Dec 22 00:00 AM",
+                    "25 Dec 22 12:00 PM",
+                    "7 days",
                     "December"
                 },
+                
+                // If attendee worked 6 days 11 hours
+                // Then AdjustedDuration is 6 days
                 new object[]
                 {
-                    // If event starts from previous month and ends in current month
-                    // Then end date requires no adjustment
-                    Utility.CalendarEvent("20 Nov 22 08:30 AM", "24 Dec 22 08:30 AM"),
-                    DateTime.Parse("24 Dec 22 08:30 AM"),
+                    Utility.CalendarEvent("19 Dec 22 00:00 AM", "25 Dec 22 11:00 AM", "user1@contoso.com"),
+                    "user1@contoso.com",
+                    "19 Dec 22 00:00 AM",
+                    "25 Dec 22 11:00 AM",
+                    "6 days",
                     "December"
                 },
+                
+                // If attendee worked 11 hours
+                // Then AdjustedDuration is 0 days
                 new object[]
                 {
-                    // If event starts from current month and ends in next month
-                    // Then end date adjusted to end on first day of next month
-                    Utility.CalendarEvent("20 Nov 22 08:30 AM", "24 Dec 22 08:30 AM"),
-                    DateTime.Parse("01 Dec 22 08:30 AM"),
-                    "November"
-                },
-                new object[]
-                {
-                    // Midnight test
-                    Utility.CalendarEvent("20 Nov 22 00:00 AM", "24 Dec 22 00:00 AM"),
-                    DateTime.Parse("01 Dec 22 00:00 AM"),
-                    "November"
-                },
-                new object[]
-                {
-                    // Leap year test
-                    Utility.CalendarEvent("20 Jan 20 08:00 AM", "15 Feb 20 08:30 AM"),
-                    DateTime.Parse("01 Feb 20 08:30 AM"),
-                    "January"
+                    Utility.CalendarEvent("19 Dec 22 00:00 AM", "19 Dec 22 11:00 AM", "user1@contoso.com"),
+                    "user1@contoso.com",
+                    "19 Dec 22 00:00 AM",
+                    "19 Dec 22 11:00 AM",
+                    "0 days",
+                    "December"
                 }
             };
     }
