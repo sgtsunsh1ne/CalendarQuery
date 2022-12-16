@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Flurl.Http.Testing;
 using Flurl.Util;
-using Ical.Net;
 
 namespace CalendarQuery.Tests
 {
@@ -84,20 +83,6 @@ namespace CalendarQuery.Tests
             Assert.True(File.Exists(filePath));
             
             File.Delete($"{path}/{filename}");
-        }
-        
-        [Test]
-        public async Task GetCalendars_WhenFileContainsValidUrls_ThenRetrieveCalendarsFromFile()
-        {
-            var input = "SampleData/sample-calendars.txt";
-            var contents = await input.GetUrlContentsAsync();
-            
-            var calendars = contents.GetCalendars();
-
-            foreach (var (_, calendar) in calendars)
-            {
-                Assert.IsInstanceOf<Calendar>(calendar);
-            }
         }
     }
 }

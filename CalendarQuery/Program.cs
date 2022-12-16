@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using ConsoleAppFramework;
 using Microsoft.Extensions.Hosting;
@@ -19,7 +20,10 @@ namespace CalendarQuery
         {
             var contents = await c.GetUrlContentsAsync();
             var filePath = DateTime.Now.ToString("yyyy-MM-dd-HHmmss");
-            var calendars = contents.GetCalendars();
+
+            var rosteredEvents = contents
+                .GetCalendars()
+                .SelectMany(i => i.GetRosteredEvents());
             
             contents.WriteToDisk(filePath);
         }

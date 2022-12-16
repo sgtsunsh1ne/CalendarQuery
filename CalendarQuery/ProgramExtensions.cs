@@ -20,8 +20,8 @@ namespace CalendarQuery
             foreach (var url in urls)
             {
                 var urlResponse = await url.GetAsync();
-                var content     = await urlResponse.GetStringAsync();
-                var fileName    = GetFileName(url, urlResponse);
+                var content = await urlResponse.GetStringAsync();
+                var fileName = GetFileName(url, urlResponse);
                 
                 contents.Add(fileName, content);
             }
@@ -95,11 +95,6 @@ namespace CalendarQuery
             {
                 File.WriteAllTextAsync($"{path}/{filename}", content);
             }
-        }
-        
-        public static Dictionary<string, Calendar> GetCalendars(this Dictionary<string, string> contents)
-        {
-            return contents.ToDictionary(i => i.Key, i => Calendar.Load(i.Value));
         }
     }
 }
