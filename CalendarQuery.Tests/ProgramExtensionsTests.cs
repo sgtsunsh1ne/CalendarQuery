@@ -82,7 +82,7 @@ namespace CalendarQuery.Tests
             
             Assert.True(File.Exists(filePath));
             
-            File.Delete($"{path}/{filename}");
+            Directory.Delete(path, true);
         }
         
         [Test]
