@@ -17,16 +17,19 @@ namespace CalendarQuery
         
         public async Task Run(
             [Option("c", "Calendar(s) - Accepts single URL, or TXT file containing list of URLs")] string c,
-            [Option("m", "Month       - Accepts month, or if none provided, the current month will be used.")] int m = 0)
+            [Option("m", "Month       - Accepts month, or if none provided, the current month will be used.")] int m = 0,
+            [Option("a", "Attendee(s) - Accepts single email or TXT file contains list of emails")] string a = "")
         {
             var contents = await c.GetUrlContentsAsync();
             var month = m == 0 ? DateTime.Today.Month : m;
+            var attendees = await a.GetAttendeesAsync();
             var filePath = DateTime.Now.ToString("yyyy-MM-dd-HHmmss");
 
             var rosteredEvents = contents
                 .GetCalendars()
                 .SelectMany(i => i.Value.Events)
                 .Where(i => i.FilterByMonth(month))
+                .Where(i => i.FilterByAttendees(attendees))
                 .Select(i => new RosteredEvent(i));
             
             contents.WriteToDisk(filePath);

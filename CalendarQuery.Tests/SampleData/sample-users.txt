@@ -1,0 +1,4 @@
+user1@some.random.email.com
+user2@some.random.email.com
+# some comment
+user3@hello.com

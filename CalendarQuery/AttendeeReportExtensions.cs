@@ -16,11 +16,10 @@ namespace CalendarQuery
         {
             return ev.Start.AsSystemLocal.Month == month || ev.End.AsSystemLocal.Month == month;
         }
-        
-        public static IEnumerable<RosteredEvent> GetRosteredEvents(this KeyValuePair<string, Calendar> kvp)
+
+        public static bool FilterByAttendees(this CalendarEvent ev, IList<string> attendees)
         {
-            var (_, calendar) = kvp;
-            return calendar.Events.Select(ev => new RosteredEvent(ev));
+            return attendees.Count == 0 || attendees.Contains(ev.Attendees.SanitiseAttendees());
         }
     }
 }

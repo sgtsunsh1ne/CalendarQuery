@@ -21,26 +21,9 @@ namespace CalendarQuery.Tests
                 Assert.IsInstanceOf<Calendar>(calendar);
             }
         }
-
-        [Test]
-        public async Task GetRosteredEvents_ConvertsCalendarEventsToRosteredEvents()
-        {
-            var input    = "SampleData/sample-calendars.txt";
-            var contents = await input.GetUrlContentsAsync();
-
-            var rosteredEvents = contents
-                .GetCalendars()
-                .SelectMany(i => i.GetRosteredEvents())
-                .ToList();
-
-            foreach (var ev in rosteredEvents)
-            {
-                Assert.IsInstanceOf<RosteredEvent>(ev);
-            }
-        }
         
         [Test]
-        public async Task FilterByMonth_WhenMonthProvided_ThenOnlyReturnEventsThatFallWithinExpectedMonth()
+        public async Task FilterByMonth_WhenMonthProvided_ThenOnlyReturnEventsWithinExpectedMonth()
         {
             var sampleIcs = await File.ReadAllTextAsync("SampleData/sample-ics-with-valid-events.ics");
             var calendar  = Calendar.Load(sampleIcs);
@@ -53,6 +36,24 @@ namespace CalendarQuery.Tests
 
             Assert.AreEqual(6, calendars.First().Value.Events.Count); // Before Filter
             Assert.AreEqual(4, events.Count); // After Filter
+        }
+        
+        [Test]
+        public async Task FilterByAttendees_WhenAttendeeListProvided_ThenOnlyReturnEventsAttendedByAttendee()
+        {
+            var sampleIcs = await File.ReadAllTextAsync("SampleData/sample-ics-with-valid-events.ics");
+            var calendars = new Dictionary<string, Calendar>
+            {
+                { "some-file.ics", Calendar.Load(sampleIcs) }
+            };
+
+            var events = calendars
+                .SelectMany(i => i.Value.Events)
+                .Where(e => e.FilterByAttendees(new List<string> {"user.one@contoso.com"}))
+                .ToList();
+
+            Assert.AreEqual(6, calendars.First().Value.Events.Count); // Before Filter
+            Assert.AreEqual(2, events.Count); // After Filter
         }
     }
 }

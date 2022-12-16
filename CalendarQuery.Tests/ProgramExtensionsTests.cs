@@ -84,5 +84,39 @@ namespace CalendarQuery.Tests
             
             File.Delete($"{path}/{filename}");
         }
+        
+        [Test]
+        public async Task GetAttendeesAsync_WhenInputIsNeitherEmailNorFile_ThenReturnEmptyList()
+        {
+            var input = "neither_email_nor_file";
+            
+            var users = await input.GetAttendeesAsync();
+            
+            Assert.IsEmpty(users);
+        }
+
+        [Test]
+        public void GetAttendeesAsync_WhenInputIsEmail_ThenListContainsOneEmail()
+        {
+            var input = "random.user@loremipsum.com";
+            
+            var users = input.GetAttendeesAsync().Result.ToList();
+            
+            Assert.AreEqual(1, users.Count);
+            CollectionAssert.Contains(users, input);
+        }
+
+        [Test]
+        public async Task GetAttendeesAsync_WhenInputIsFile_ThenRetrieveUsersFromFile()
+        {
+            var input = "SampleData/sample-users.txt";
+            
+            var users = await input.GetAttendeesAsync();
+            
+            Assert.AreEqual(3, users.ToList().Count);
+            CollectionAssert.Contains(users, "user1@some.random.email.com");
+            CollectionAssert.Contains(users, "user2@some.random.email.com");
+            CollectionAssert.Contains(users, "user3@hello.com");
+        }
     }
 }

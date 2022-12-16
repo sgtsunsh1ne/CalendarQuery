@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Mime;
 using System.Threading.Tasks;
-using Ical.Net;
+using EmailValidation;
 
 namespace CalendarQuery
 {   
@@ -95,6 +95,26 @@ namespace CalendarQuery
             {
                 File.WriteAllTextAsync($"{path}/{filename}", content);
             }
+        }
+        
+        
+        public static async Task<IList<string>> GetAttendeesAsync(this string input)
+        {   
+            if (EmailValidator.Validate(input))
+            {
+                return new[] { input };
+            }
+
+            if (!File.Exists(input))
+            {
+                return Array.Empty<string>();
+            }
+
+            var lines = await File.ReadAllLinesAsync(input);
+            
+            return lines
+                .Where(email => EmailValidator.Validate(email))
+                .ToList();
         }
     }
 }
