@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using ConsoleAppFramework;
@@ -26,8 +27,9 @@ namespace CalendarQuery
             var attendees = await a.GetAttendeesAsync();
             var holidays = await h.GetHolidaysAsync();
             var filePath = DateTime.Now.ToString("yyyy-MM-dd-HHmmss");
+            var monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month);
 
-            var rosteredEvents = contents.GetCalendars()
+            var attendeeSummaryReport = contents.GetCalendars()
                 .SelectMany(i => i.Value.Events)
                 .Where(i => i.FilterByMonth(month))
                 .Where(i => i.FilterByAttendees(attendees))
@@ -37,7 +39,8 @@ namespace CalendarQuery
                 .ToList();
             
             contents.WriteToDisk(filePath);
-            rosteredEvents.WriteToConsole();
+            attendeeSummaryReport.WriteToConsole();
+            attendeeSummaryReport.WriteToCsv($"{filePath}/attendee-report-{monthName.ToLowerInvariant()}.csv");
         }
     }
 }
