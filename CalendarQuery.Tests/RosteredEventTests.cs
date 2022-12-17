@@ -186,8 +186,7 @@ namespace CalendarQuery.Tests
                         new(2023, 01, 02),
                         new(2023, 01, 03)
                     }
-                },
-                
+                }
             };
     }
 }

@@ -18,10 +18,10 @@ namespace CalendarQuery
             _holidays = holidays;
         }
 
-        public string CalendarName => _calendarEvent.Calendar.Name;
-        public string Attendees => _calendarEvent.Attendees.SanitiseAttendees();
+        public string CalendarName     => _calendarEvent.Calendar.Name;
+        public string Attendees        => _calendarEvent.Attendees.SanitiseAttendees();
         public DateTime StartDateLocal => _calendarEvent.Start.AsSystemLocal;
-        public DateTime EndDateLocal => _calendarEvent.End.AsSystemLocal;
+        public DateTime EndDateLocal   => _calendarEvent.End.AsSystemLocal;
         public TimeSpan ActualDuration => _calendarEvent.Duration;
         
         public DateTime AdjustedStartDateLocal
@@ -81,9 +81,9 @@ namespace CalendarQuery
         public int WeekendCount          => Weekends.Count() - WeekendHolidays.Count();
         public int PublicHolidayCount    => WeekdayHolidays.Count() + WeekendHolidays.Count();
 
-        private IEnumerable<DateTime> DaysWorked => AdjustedStartDateLocal.GetDates(AdjustedDuration.Days);
-        private IEnumerable<string> Weekdays => DaysWorked.AreWeekdays();
-        private IEnumerable<string> Weekends => DaysWorked.AreWeekends();
+        private IEnumerable<DateTime> DaysWorked    => AdjustedStartDateLocal.GetDates(AdjustedDuration.Days);
+        private IEnumerable<string> Weekdays        => DaysWorked.AreWeekdays();
+        private IEnumerable<string> Weekends        => DaysWorked.AreWeekends();
         private IEnumerable<string> WeekdayHolidays => _holidays.AreWeekdays().Intersect(Weekdays);
         private IEnumerable<string> WeekendHolidays => _holidays.AreWeekends().Intersect(Weekends);
     }
