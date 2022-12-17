@@ -3,10 +3,10 @@ using System.Linq;
 using Ical.Net;
 using Ical.Net.CalendarComponents;
 
-namespace CalendarQuery
+namespace CalendarQuery.Extensions
 {
     public static class AttendeeSummaryExtensions
-    {
+    {        
         public static Dictionary<string, Calendar> GetCalendars(this Dictionary<string, string> contents)
         {
             return contents.ToDictionary(i => i.Key, i =>

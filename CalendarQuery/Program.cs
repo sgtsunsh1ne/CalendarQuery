@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using CalendarQuery.Extensions;
 using ConsoleAppFramework;
 using Microsoft.Extensions.Hosting;
 
@@ -28,7 +29,7 @@ namespace CalendarQuery
             var holidays = await h.GetHolidaysAsync();
             var filePath = DateTime.Now.ToString("yyyy-MM-dd-HHmmss");
             var monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month);
-
+            
             var attendeeSummaryReport = contents
                 .GetCalendars()
                 .SelectMany(i => i.Value.Events)

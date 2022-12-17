@@ -1,4 +1,3 @@
-using Flurl.Http;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -8,9 +7,10 @@ using System.Net.Mime;
 using System.Threading.Tasks;
 using CsvHelper;
 using EmailValidation;
+using Flurl.Http;
 using Spectre.Console;
 
-namespace CalendarQuery
+namespace CalendarQuery.Extensions
 {   
     public static class ProgramExtensions
     {

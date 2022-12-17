@@ -2,6 +2,7 @@ using Ical.Net.CalendarComponents;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CalendarQuery.Extensions;
 
 namespace CalendarQuery
 {

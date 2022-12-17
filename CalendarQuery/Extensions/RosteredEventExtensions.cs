@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Ical.Net.DataTypes;
 
-namespace CalendarQuery
+namespace CalendarQuery.Extensions
 {
     public static class RosteredEventExtensions
     {
