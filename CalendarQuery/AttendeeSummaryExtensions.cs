@@ -5,11 +5,16 @@ using Ical.Net.CalendarComponents;
 
 namespace CalendarQuery
 {
-    public static class AttendeeReportExtensions
+    public static class AttendeeSummaryExtensions
     {
         public static Dictionary<string, Calendar> GetCalendars(this Dictionary<string, string> contents)
         {
-            return contents.ToDictionary(i => i.Key, i => Calendar.Load(i.Value));
+            return contents.ToDictionary(i => i.Key, i =>
+            {
+                var calendar = Calendar.Load(i.Value);
+                calendar.Name = i.Key;
+                return calendar;
+            });
         }
         
         public static bool FilterByMonth(this CalendarEvent ev, int month)

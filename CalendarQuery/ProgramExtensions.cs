@@ -1,7 +1,6 @@
 using Flurl.Http;
 using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -9,8 +8,6 @@ using System.Net.Mime;
 using System.Threading.Tasks;
 using CsvHelper;
 using EmailValidation;
-using Humanizer;
-using Humanizer.Localisation;
 using Spectre.Console;
 
 namespace CalendarQuery
@@ -186,12 +183,12 @@ namespace CalendarQuery
             {
                 scheduleTable.AddRow(
                     e.Attendee,
-                    e.RosteredEvents.Aggregate(string.Empty, (c, i) => c + $"{i.AdjustedStartDateLocal:ddd dd MMM yy HH:mm tt}\n"),
-                    e.RosteredEvents.Aggregate(string.Empty, (c, i) => c + $"{i.AdjustedEndDateLocal:ddd dd MMM yy HH:mm tt}\n"),
-                    e.RosteredEvents.Aggregate(string.Empty, (c, i) => c + $"{i.AdjustedDuration.Humanize(maxUnit: TimeUnit.Day, minUnit:TimeUnit.Day)}\n"),
+                    e.AdjustedStartDateLocal,
+                    e.AdjustedEndDateLocal,
+                    e.AdjustedDuration,
                     e.WeekdayCount.ToString(),
                     e.WeekendCount.ToString(),
-                    e.PublicHolidayCount.ToString(),
+                    e.HolidayCount.ToString(),
                     e.TotalDays.ToString(),
                     e.Notes
                 );
@@ -209,32 +206,8 @@ namespace CalendarQuery
         public static void WriteToCsv(this IEnumerable<AttendeeSummary> items, string path)
         {
             using var writer = new StreamWriter(path);
-            using var csv    = new CsvWriter(writer, CultureInfo.InvariantCulture);
-            
-            var records = new List<dynamic>();
-            
-            foreach (var e in items)
-            {
-                dynamic record = new ExpandoObject();
-                
-                record.Attendee          = e.Attendee;
-                record.ActualStartDate   = e.RosteredEvents.Aggregate(string.Empty, (c, i) => c + $"{i.StartDateLocal:ddd dd MMM yy HH:mm tt}\n");
-                record.ActualEndDate     = e.RosteredEvents.Aggregate(string.Empty, (c, i) => c + $"{i.EndDateLocal:ddd dd MMM yy HH:mm tt}\n");
-                record.ActualDuration    = e.RosteredEvents.Aggregate(string.Empty, (c, i) => c + $"{i.ActualDuration.Humanize(maxUnit:TimeUnit.Day, precision: 3)}\n");
-                record.AdjustedStartDate = e.RosteredEvents.Aggregate(string.Empty, (c, i) => c + $"{i.AdjustedStartDateLocal:ddd dd MMM yy HH:mm tt}\n");
-                record.AdjustedEndDate   = e.RosteredEvents.Aggregate(string.Empty, (c, i) => c + $"{i.AdjustedEndDateLocal:ddd dd MMM yy HH:mm tt}\n");
-                record.AdjustedDuration  = e.RosteredEvents.Aggregate(string.Empty, (c, i) => c + $"{i.AdjustedDuration.Humanize(maxUnit: TimeUnit.Day, minUnit:TimeUnit.Day, precision: 3)}\n");
-                record.WeekdayCount      = e.WeekdayCount;
-                record.WeekendCount      = e.WeekendCount;
-                record.HolidayCount      = e.PublicHolidayCount;
-                record.TotalDays         = e.WeekdayCount + e.WeekendCount + e.PublicHolidayCount;
-                record.Notes             = e.Notes;
-                record.ApprovedBy        = string.Empty;
-                record.ApprovedOn        = string.Empty;
-                
-                records.Add(record);                
-            }
-            
+            using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
+            var records = items.ToList();
             csv.WriteRecords(records);   
         }
     }

@@ -6,22 +6,23 @@ using Ical.Net;
 
 namespace CalendarQuery.Tests
 {
-    public class AttendeeReportExtensionsTests
+    public class AttendeeSummaryExtensionsTests
     {
         [Test]
         public async Task GetCalendars_WhenFileContainsValidUrls_ThenRetrieveCalendarsFromFile()
         {
-            var input    = "SampleData/sample-calendars.txt";
+            var input = "SampleData/sample-calendars.txt";
             var contents = await input.GetUrlContentsAsync();
 
             var calendars = contents.GetCalendars();
 
-            foreach (var (_, calendar) in calendars)
+            foreach (var (filename, calendar) in calendars)
             {
                 Assert.IsInstanceOf<Calendar>(calendar);
+                Assert.That(calendar.Name, Is.EqualTo(filename));
             }
         }
-        
+
         [Test]
         public async Task FilterByMonth_WhenMonthProvided_ThenOnlyReturnEventsWithinExpectedMonth()
         {

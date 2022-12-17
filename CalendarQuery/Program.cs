@@ -22,14 +22,15 @@ namespace CalendarQuery
             [Option("a", "Attendee(s) - Accepts single email or TXT file contains list of emails")] string a = "",
             [Option("h", "Holiday(s)  - Accepts multiple dates (yyyy-MM-dd) as comma-separated values")] string h = "")
         {
-            var contents = await c.GetUrlContentsAsync();
+            var contents = await c.GetUrlContentsAsync();     
             var month = m == 0 ? DateTime.Today.Month : m;
             var attendees = await a.GetAttendeesAsync();
             var holidays = await h.GetHolidaysAsync();
             var filePath = DateTime.Now.ToString("yyyy-MM-dd-HHmmss");
             var monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month);
 
-            var attendeeSummaryReport = contents.GetCalendars()
+            var attendeeSummaryReport = contents
+                .GetCalendars()
                 .SelectMany(i => i.Value.Events)
                 .Where(i => i.FilterByMonth(month))
                 .Where(i => i.FilterByAttendees(attendees))

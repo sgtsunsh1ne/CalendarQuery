@@ -17,7 +17,8 @@ namespace CalendarQuery
             _month = month;
             _holidays = holidays;
         }
-        
+
+        public string CalendarName => _calendarEvent.Calendar.Name;
         public string Attendees => _calendarEvent.Attendees.SanitiseAttendees();
         public DateTime StartDateLocal => _calendarEvent.Start.AsSystemLocal;
         public DateTime EndDateLocal => _calendarEvent.End.AsSystemLocal;
