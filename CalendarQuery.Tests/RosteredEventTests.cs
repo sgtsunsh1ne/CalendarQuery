@@ -18,11 +18,13 @@ namespace CalendarQuery.Tests
             string expectedAdjustedDuration,
             int expectedWeekdayCount,
             int expectedWeekendCount,
-            string monthName)
+            int expectedHolidayCount,
+            string monthName,
+            IEnumerable<DateTime> holidays)
         {
             var month = DateTime.ParseExact(monthName, "MMMM", CultureInfo.CurrentCulture).Month;
             
-            var sut = new RosteredEvent(calendarEvent, month);
+            var sut = new RosteredEvent(calendarEvent, month, holidays);
 
             Assert.That(sut.StartDateLocal, Is.EqualTo(calendarEvent.DtStart.AsSystemLocal));
             Assert.That(sut.EndDateLocal, Is.EqualTo(calendarEvent.DtEnd.AsSystemLocal));
@@ -43,6 +45,11 @@ namespace CalendarQuery.Tests
             
             Assert.That(sut.WeekdayCount, Is.EqualTo(expectedWeekdayCount));
             Assert.That(sut.WeekendCount, Is.EqualTo(expectedWeekendCount));
+            Assert.That(sut.PublicHolidayCount, Is.EqualTo(expectedHolidayCount));
+            
+            Assert.That(
+                sut.WeekdayCount + sut.WeekendCount + sut.PublicHolidayCount, 
+                Is.EqualTo(sut.AdjustedDuration.Days));
         }
 
         public static IEnumerable<object[]> ExpectedRosteredEvents =>
@@ -58,7 +65,9 @@ namespace CalendarQuery.Tests
                     "7 days",
                     5,
                     2,
-                    "December"
+                    0,
+                    "December",
+                    new List<DateTime>()
                 },
                 
                 // If event starts from previous month and ends in current month
@@ -72,7 +81,9 @@ namespace CalendarQuery.Tests
                     "4 days",
                     2,
                     2,
-                    "December"
+                    0,
+                    "December",
+                    new List<DateTime>()
                 },
                 
                 // If event starts in current month and ends in next month
@@ -86,7 +97,9 @@ namespace CalendarQuery.Tests
                     "6 days",
                     5,
                     1,
-                    "December"
+                    0,
+                    "December",
+                    new List<DateTime>()
                 },
                 
                 // If attendee worked 6 days 23 hours
@@ -100,7 +113,9 @@ namespace CalendarQuery.Tests
                     "7 days",
                     5,
                     2,
-                    "December"
+                    0,
+                    "December",
+                    new List<DateTime>()
                 },
                 
                 // If attendee worked 6 days 12 hours
@@ -114,7 +129,9 @@ namespace CalendarQuery.Tests
                     "7 days",
                     5,
                     2,
-                    "December"
+                    0,
+                    "December",
+                    new List<DateTime>()
                 },
                 
                 // If attendee worked 6 days 11 hours
@@ -128,7 +145,9 @@ namespace CalendarQuery.Tests
                     "6 days",
                     5,
                     1,
-                    "December"
+                    0,
+                    "December",
+                    new List<DateTime>()
                 },
                 
                 // If attendee worked 11 hours
@@ -142,8 +161,33 @@ namespace CalendarQuery.Tests
                     "0 days",
                     0,
                     0,
-                    "December"
-                }
+                    0,
+                    "December",
+                    new List<DateTime>()
+                },
+                // Public Holiday Tests
+                new object[]
+                {
+                    Utility.CalendarEvent("26 Dec 22 00:00 AM", "12 Jan 23 00:00 AM", "user1@contoso.com"),
+                    "user1@contoso.com",
+                    "26 Dec 22 00:00 AM", 
+                    "01 Jan 23 00:00 AM", 
+                    "6 days",
+                    3,
+                    1,
+                    2,
+                    "December",
+                    new List<DateTime>
+                    {
+                        new(2022, 12, 25),
+                        new(2022, 12, 26),
+                        new(2022, 12, 27),
+                        new(2023, 01, 01),
+                        new(2023, 01, 02),
+                        new(2023, 01, 03)
+                    }
+                },
+                
             };
     }
 }

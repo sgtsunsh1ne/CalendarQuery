@@ -121,6 +121,39 @@ namespace CalendarQuery.Tests
             CollectionAssert.Contains(users, "user2@some.random.email.com");
             CollectionAssert.Contains(users, "user3@hello.com");
         }
+
+        [Test]
+        [TestCase("2022-11-20", 1)]
+        [TestCase("2022-11-20, 2022-12-01", 2)]
+        [TestCase("gobbledygook", 0)]
+        [TestCase("2022-11-20,gobbledygook", 1)]
+        public void ConvertToDates_WhenInputAreValidDates_ThenReturnDatesAsList(string input, int expectedListCount)
+        {
+            var dates = input.ConvertToDates();
+            
+            Assert.That(dates.Count, Is.EqualTo(expectedListCount));
+
+            foreach (var d in dates)
+            {
+                Assert.IsInstanceOf<DateTime>(d);
+            }
+        }
+
+        [Test]
+        public async Task GetHolidaysAsync_WhenProvidedWithCommaSeparatedDates_ThenReturnDates()
+        {
+            var input    = "2022-12-25, 2022-12-26, 2022-12-27, 2023-01-01, 2023-01-02, 2023-01-03";
+            var holidays = await input.GetHolidaysAsync();
+            Assert.That(holidays.Count, Is.EqualTo(6));
+        }
+
+        [Test]
+        public async Task GetHolidaysAsync_WhenInputIsValidFile_ThenRetrieveHolidaysFromFile()
+        {
+            var input = "SampleData/sample-holidays.txt";
+            var holidays = await input.GetHolidaysAsync();
+            Assert.That(holidays.Count, Is.EqualTo(7));
+        }
         
         [Test]
         public void GenerateConsoleTable_Works()
@@ -137,7 +170,7 @@ namespace CalendarQuery.Tests
 
             var roster = calendars
                 .SelectMany(i => i.Value.Events)
-                .Select(i => new RosteredEvent(i, month));
+                .Select(i => new RosteredEvent(i, month, new List<DateTime>()));
 
             var table = roster.GenerateConsoleTable();
 
@@ -145,7 +178,7 @@ namespace CalendarQuery.Tests
             var tableColumnCount  = table.Columns.Count;
             
             Assert.IsTrue(tableContainsRows);
-            Assert.That(tableColumnCount, Is.EqualTo(9));
+            Assert.That(tableColumnCount, Is.EqualTo(10));
         }
     }
 }

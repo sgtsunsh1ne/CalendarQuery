@@ -9,11 +9,13 @@ namespace CalendarQuery
     {
         private readonly CalendarEvent _calendarEvent;
         private readonly int _month;
+        private readonly IEnumerable<DateTime> _holidays;
         
-        public RosteredEvent(CalendarEvent calendarEvent, int month)
+        public RosteredEvent(CalendarEvent calendarEvent, int month, IEnumerable<DateTime> holidays)
         {
             _calendarEvent = calendarEvent;
             _month = month;
+            _holidays = holidays;
         }
         
         public string Attendees => _calendarEvent.Attendees.SanitiseAttendees();
@@ -74,11 +76,14 @@ namespace CalendarQuery
         }
 
         public TimeSpan AdjustedDuration => AdjustedEndDateLocal.Subtract(AdjustedStartDateLocal).RoundToNearestDay();
-        public int WeekdayCount => Weekdays.Count();
-        public int WeekendCount => Weekends.Count();
+        public int WeekdayCount          => Weekdays.Count() - WeekdayHolidays.Count();
+        public int WeekendCount          => Weekends.Count() - WeekendHolidays.Count();
+        public int PublicHolidayCount    => WeekdayHolidays.Count() + WeekendHolidays.Count();
 
         private IEnumerable<DateTime> DaysWorked => AdjustedStartDateLocal.GetDates(AdjustedDuration.Days);
         private IEnumerable<string> Weekdays => DaysWorked.AreWeekdays();
         private IEnumerable<string> Weekends => DaysWorked.AreWeekends();
+        private IEnumerable<string> WeekdayHolidays => _holidays.AreWeekdays().Intersect(Weekdays);
+        private IEnumerable<string> WeekendHolidays => _holidays.AreWeekends().Intersect(Weekends);
     }
 }

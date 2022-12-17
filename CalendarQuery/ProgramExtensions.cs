@@ -120,6 +120,45 @@ namespace CalendarQuery
                 .ToList();
         }
 
+        public static async Task<IList<DateTime>> GetHolidaysAsync(this string input)
+        {
+            if (!File.Exists(input))
+            {
+                return input.ConvertToDates();
+            }
+
+            var lines = await File.ReadAllLinesAsync(input);
+
+            var dates = new List<DateTime>();
+            
+            foreach (var i in lines)
+            {
+                if (DateTime.TryParse(i.Trim(), out var date))
+                {
+                    dates.Add(date);
+                }
+            }
+
+            return dates;
+        }
+
+        public static IList<DateTime> ConvertToDates(this string input)
+        {
+            var inputArray = input.Split(",");
+
+            var dates = new List<DateTime>();
+
+            foreach (var i in inputArray)
+            {
+                if (DateTime.TryParse(i.Trim(), out var date))
+                {
+                    dates.Add(date);
+                }
+            }
+
+            return dates;
+        }
+
         public static Table GenerateConsoleTable(this IEnumerable<RosteredEvent> items)
         {
             var scheduleTable = new Table();
@@ -133,12 +172,14 @@ namespace CalendarQuery
                 "AdjustedEndDate",
                 "AdjustedDuration",
                 "Weekdays",
-                "Weekends");
+                "Weekends",
+                "Holidays");
 
             scheduleTable.Columns[3].RightAligned();            
             scheduleTable.Columns[6].RightAligned();            
             scheduleTable.Columns[7].RightAligned();            
-            scheduleTable.Columns[8].RightAligned();
+            scheduleTable.Columns[8].RightAligned();            
+            scheduleTable.Columns[9].RightAligned();
             
             foreach (var e in items)
             {
@@ -151,7 +192,8 @@ namespace CalendarQuery
                     e.AdjustedEndDateLocal.ToString("ddd dd MMM yy HH:mm tt"),
                     e.AdjustedDuration.Humanize(maxUnit: TimeUnit.Day, minUnit: TimeUnit.Day, precision: 3),
                     e.WeekdayCount.ToString(),
-                    e.WeekendCount.ToString()
+                    e.WeekendCount.ToString(),
+                    e.PublicHolidayCount.ToString()
                 );
             }
 
