@@ -170,7 +170,9 @@ namespace CalendarQuery.Tests
 
             var roster = calendars
                 .SelectMany(i => i.Value.Events)
-                .Select(i => new RosteredEvent(i, month, new List<DateTime>()));
+                .Select(i => new RosteredEvent(i, month, new List<DateTime>()))
+                .GroupBy(i => i.Attendees)
+                .Select(i => new AttendeeSummary(i.Key, i));
 
             var table = roster.GenerateConsoleTable();
 
@@ -178,7 +180,7 @@ namespace CalendarQuery.Tests
             var tableColumnCount  = table.Columns.Count;
             
             Assert.IsTrue(tableContainsRows);
-            Assert.That(tableColumnCount, Is.EqualTo(10));
+            Assert.That(tableColumnCount, Is.EqualTo(9));
         }
     }
 }

@@ -31,7 +31,10 @@ namespace CalendarQuery
                 .SelectMany(i => i.Value.Events)
                 .Where(i => i.FilterByMonth(month))
                 .Where(i => i.FilterByAttendees(attendees))
-                .Select(i => new RosteredEvent(i, month, holidays));
+                .Select(i => new RosteredEvent(i, month, holidays))
+                .GroupBy(i => i.Attendees)
+                .Select(attendeeEvents => new AttendeeSummary(attendeeEvents.Key, attendeeEvents))
+                .ToList();
             
             contents.WriteToDisk(filePath);
             rosteredEvents.WriteToConsole();

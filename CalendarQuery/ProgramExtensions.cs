@@ -159,48 +159,45 @@ namespace CalendarQuery
             return dates;
         }
 
-        public static Table GenerateConsoleTable(this IEnumerable<RosteredEvent> items)
+        public static Table GenerateConsoleTable(this IEnumerable<AttendeeSummary> items)
         {
             var scheduleTable = new Table();
 
             scheduleTable.AddColumns(
                 "Attendees",
-                "ActualStartDate",
-                "ActualEndDate",
-                "ActualDuration",
                 "AdjustedStartDate",
                 "AdjustedEndDate",
                 "AdjustedDuration",
                 "Weekdays",
                 "Weekends",
-                "Holidays");
+                "Holidays",
+                "TotalDays",
+                "Notes");
 
-            scheduleTable.Columns[3].RightAligned();            
+            scheduleTable.Columns[4].RightAligned();            
+            scheduleTable.Columns[5].RightAligned();            
             scheduleTable.Columns[6].RightAligned();            
-            scheduleTable.Columns[7].RightAligned();            
-            scheduleTable.Columns[8].RightAligned();            
-            scheduleTable.Columns[9].RightAligned();
+            scheduleTable.Columns[7].RightAligned();
             
             foreach (var e in items)
             {
                 scheduleTable.AddRow(
-                    e.Attendees,
-                    e.StartDateLocal.ToString("ddd dd MMM yy HH:mm tt"),
-                    e.EndDateLocal.ToString("ddd dd MMM yy HH:mm tt"),
-                    e.ActualDuration.Humanize(maxUnit: TimeUnit.Day, precision: 3),
-                    e.AdjustedStartDateLocal.ToString("ddd dd MMM yy HH:mm tt"),
-                    e.AdjustedEndDateLocal.ToString("ddd dd MMM yy HH:mm tt"),
-                    e.AdjustedDuration.Humanize(maxUnit: TimeUnit.Day, minUnit: TimeUnit.Day, precision: 3),
+                    e.Attendee,
+                    e.RosteredEvents.Aggregate(string.Empty, (c, i) => c + $"{i.AdjustedStartDateLocal:ddd dd MMM yy HH:mm tt}\n"),
+                    e.RosteredEvents.Aggregate(string.Empty, (c, i) => c + $"{i.AdjustedEndDateLocal:ddd dd MMM yy HH:mm tt}\n"),
+                    e.RosteredEvents.Aggregate(string.Empty, (c, i) => c + $"{i.AdjustedDuration.Humanize(maxUnit: TimeUnit.Day, minUnit:TimeUnit.Day)}\n"),
                     e.WeekdayCount.ToString(),
                     e.WeekendCount.ToString(),
-                    e.PublicHolidayCount.ToString()
+                    e.PublicHolidayCount.ToString(),
+                    e.TotalDays.ToString(),
+                    e.Notes
                 );
             }
 
             return scheduleTable;
         }
         
-        public static void WriteToConsole(this IEnumerable<RosteredEvent> items)
+        public static void WriteToConsole(this IEnumerable<AttendeeSummary> items)
         {
             var table = items.GenerateConsoleTable();
             AnsiConsole.Write(table);
