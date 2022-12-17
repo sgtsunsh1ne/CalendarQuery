@@ -1,5 +1,7 @@
 using Ical.Net.CalendarComponents;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CalendarQuery
 {
@@ -71,6 +73,12 @@ namespace CalendarQuery
             }
         }
 
-        public TimeSpan AdjustedDuration => AdjustedStartDateLocal.Subtract(AdjustedEndDateLocal).RoundToNearestDay();
+        public TimeSpan AdjustedDuration => AdjustedEndDateLocal.Subtract(AdjustedStartDateLocal).RoundToNearestDay();
+        public int WeekdayCount => Weekdays.Count();
+        public int WeekendCount => Weekends.Count();
+
+        private IEnumerable<DateTime> DaysWorked => AdjustedStartDateLocal.GetDates(AdjustedDuration.Days);
+        private IEnumerable<string> Weekdays => DaysWorked.AreWeekdays();
+        private IEnumerable<string> Weekends => DaysWorked.AreWeekends();
     }
 }

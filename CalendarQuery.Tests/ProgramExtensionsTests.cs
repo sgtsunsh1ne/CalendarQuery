@@ -125,9 +125,8 @@ namespace CalendarQuery.Tests
         [Test]
         public void GenerateConsoleTable_Works()
         {
-            var month     = 11;
-            var monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month);
-            var input     = "SampleData/sample-ics-with-valid-events.ics";
+            var month = 11;
+            var input = "SampleData/sample-ics-with-valid-events.ics";
 
             using var calendarReader = new StreamReader(input);
 
@@ -146,7 +145,7 @@ namespace CalendarQuery.Tests
             var tableColumnCount  = table.Columns.Count;
             
             Assert.IsTrue(tableContainsRows);
-            Assert.That(tableColumnCount, Is.EqualTo(7));
+            Assert.That(tableColumnCount, Is.EqualTo(9));
         }
     }
 }

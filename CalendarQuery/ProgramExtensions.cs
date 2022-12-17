@@ -131,9 +131,14 @@ namespace CalendarQuery
                 "ActualDuration",
                 "AdjustedStartDate",
                 "AdjustedEndDate",
-                "AdjustedDuration");
-            
-            scheduleTable.Columns[3].RightAligned();
+                "AdjustedDuration",
+                "Weekdays",
+                "Weekends");
+
+            scheduleTable.Columns[3].RightAligned();            
+            scheduleTable.Columns[6].RightAligned();            
+            scheduleTable.Columns[7].RightAligned();            
+            scheduleTable.Columns[8].RightAligned();
             
             foreach (var e in items)
             {
@@ -144,7 +149,9 @@ namespace CalendarQuery
                     e.ActualDuration.Humanize(maxUnit: TimeUnit.Day, precision: 3),
                     e.AdjustedStartDateLocal.ToString("ddd dd MMM yy HH:mm tt"),
                     e.AdjustedEndDateLocal.ToString("ddd dd MMM yy HH:mm tt"),
-                    e.AdjustedDuration.Humanize(maxUnit: TimeUnit.Day, minUnit: TimeUnit.Day, precision: 3)
+                    e.AdjustedDuration.Humanize(maxUnit: TimeUnit.Day, minUnit: TimeUnit.Day, precision: 3),
+                    e.WeekdayCount.ToString(),
+                    e.WeekendCount.ToString()
                 );
             }
 

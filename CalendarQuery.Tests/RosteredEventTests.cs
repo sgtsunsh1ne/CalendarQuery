@@ -16,6 +16,8 @@ namespace CalendarQuery.Tests
             string expectedAdjustedStartDate,
             string expectedAdjustedEndDate,
             string expectedAdjustedDuration,
+            int expectedWeekdayCount,
+            int expectedWeekendCount,
             string monthName)
         {
             var month = DateTime.ParseExact(monthName, "MMMM", CultureInfo.CurrentCulture).Month;
@@ -38,6 +40,9 @@ namespace CalendarQuery.Tests
             Assert.That(
                 sut.AdjustedDuration.Humanize(maxUnit:TimeUnit.Day, minUnit:TimeUnit.Day),
                 Is.EqualTo(expectedAdjustedDuration));
+            
+            Assert.That(sut.WeekdayCount, Is.EqualTo(expectedWeekdayCount));
+            Assert.That(sut.WeekendCount, Is.EqualTo(expectedWeekendCount));
         }
 
         public static IEnumerable<object[]> ExpectedRosteredEvents =>
@@ -51,6 +56,8 @@ namespace CalendarQuery.Tests
                     "01 Dec 22 00:00 AM",
                     "08 Dec 22 00:00 AM",
                     "7 days",
+                    5,
+                    2,
                     "December"
                 },
                 
@@ -63,6 +70,8 @@ namespace CalendarQuery.Tests
                     "01 Dec 22 08:30 AM",
                     "05 Dec 22 08:30 AM",
                     "4 days",
+                    2,
+                    2,
                     "December"
                 },
                 
@@ -75,6 +84,8 @@ namespace CalendarQuery.Tests
                     "26 Dec 22 08:30 AM",
                     "01 Jan 23 08:30 AM",
                     "6 days",
+                    5,
+                    1,
                     "December"
                 },
                 
@@ -87,6 +98,8 @@ namespace CalendarQuery.Tests
                     "19 Dec 22 00:00 AM",
                     "25 Dec 22 23:00 PM",
                     "7 days",
+                    5,
+                    2,
                     "December"
                 },
                 
@@ -99,6 +112,8 @@ namespace CalendarQuery.Tests
                     "19 Dec 22 00:00 AM",
                     "25 Dec 22 12:00 PM",
                     "7 days",
+                    5,
+                    2,
                     "December"
                 },
                 
@@ -111,6 +126,8 @@ namespace CalendarQuery.Tests
                     "19 Dec 22 00:00 AM",
                     "25 Dec 22 11:00 AM",
                     "6 days",
+                    5,
+                    1,
                     "December"
                 },
                 
@@ -120,9 +137,11 @@ namespace CalendarQuery.Tests
                 {
                     Utility.CalendarEvent("19 Dec 22 00:00 AM", "19 Dec 22 11:00 AM", "user1@contoso.com"),
                     "user1@contoso.com",
-                    "19 Dec 22 00:00 AM",
-                    "19 Dec 22 11:00 AM",
+                    "19 Dec 22 00:00 AM", 
+                    "19 Dec 22 11:00 AM", 
                     "0 days",
+                    0,
+                    0,
                     "December"
                 }
             };
