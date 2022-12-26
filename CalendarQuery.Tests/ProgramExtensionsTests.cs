@@ -12,7 +12,7 @@ using Calendar = Ical.Net.Calendar;
 
 namespace CalendarQuery.Tests
 {
-    public class Tests
+    public class ProgramExtensionsTests
     {
         [Test]
         public async Task GetUrlContentsAsync_WhenFileContainsValidUrls_ThenGetContentsFromUrl()

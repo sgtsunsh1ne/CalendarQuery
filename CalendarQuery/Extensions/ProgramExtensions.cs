@@ -99,8 +99,7 @@ namespace CalendarQuery.Extensions
                 File.WriteAllTextAsync($"{path}/{filename}", content);
             }
         }
-        
-        
+
         public static async Task<IList<string>> GetAttendeesAsync(this string input)
         {   
             if (EmailValidator.Validate(input))
