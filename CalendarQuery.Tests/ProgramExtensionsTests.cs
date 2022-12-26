@@ -1,14 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CalendarQuery.Extensions;
-using CsvHelper;
 using Flurl.Http.Testing;
 using Flurl.Util;
-using Calendar = Ical.Net.Calendar;
 
 namespace CalendarQuery.Tests
 {
@@ -155,71 +151,6 @@ namespace CalendarQuery.Tests
             var input = "SampleData/sample-holidays.txt";
             var holidays = await input.GetHolidaysAsync();
             Assert.That(holidays.Count, Is.EqualTo(7));
-        }
-        
-        [Test]
-        public void GenerateConsoleTable_EndToEndTest()
-        {
-            var month = 11;
-            var input = "SampleData/sample-ics-with-valid-events.ics";
-
-            using var calendarReader = new StreamReader(input);
-
-            var calendars = new Dictionary<string, Calendar>
-            {
-                {"sample.ics", Calendar.Load(calendarReader)}
-            };
-
-            var roster = calendars
-                .SelectMany(i => i.Value.Events)
-                .Select(i => new RosteredEvent(i, month, new List<DateTime>()))
-                .GroupBy(i => i.Attendees)
-                .Select(i => new AttendeeSummary(i.Key, i));
-
-            var table = roster.GenerateConsoleTable();
-
-            var tableContainsRows = table.Rows.Any();
-            var tableColumnCount  = table.Columns.Count;
-            
-            Assert.IsTrue(tableContainsRows);
-            Assert.That(tableColumnCount, Is.EqualTo(9));
-        }
-        
-        [Test]
-        public void WriteToCsv_EndToEndTest()
-        {
-            var month = 11;
-            var monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month);
-            var filename = $"report-{monthName.ToLowerInvariant()}.csv";
-            var input = "SampleData/sample-ics-with-valid-events.ics";
-
-            using var calendarReader = new StreamReader(input);
-
-            var calendars = new Dictionary<string, Calendar>
-            {
-                {"sample.ics", Calendar.Load(calendarReader)}
-            };
-
-            var roster = calendars
-                .SelectMany(i => i.Value.Events)
-                .Where(i => i.FilterByMonth(month))
-                .Select(i => new RosteredEvent(i, month, new List<DateTime>()))
-                .GroupBy(i => i.Attendees)
-                .Select(attendeeEvents => new AttendeeSummary(attendeeEvents.Key, attendeeEvents))
-                .ToList();
-            
-            roster.WriteToCsv(filename);
-            
-            Assert.True(File.Exists(filename));
-            
-            using var reader = new StreamReader(filename);
-            using var csv    = new CsvReader(reader, CultureInfo.InvariantCulture);
-
-            var rows = csv.GetRecords<dynamic>();
-            
-            Assert.True(rows.Any());
-            
-            File.Delete(filename);
         }
     }
 }

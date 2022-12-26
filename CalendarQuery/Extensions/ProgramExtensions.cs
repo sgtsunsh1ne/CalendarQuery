@@ -1,14 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Mime;
 using System.Threading.Tasks;
-using CsvHelper;
 using EmailValidation;
 using Flurl.Http;
-using Spectre.Console;
 
 namespace CalendarQuery.Extensions
 {   
@@ -156,58 +153,6 @@ namespace CalendarQuery.Extensions
             }
 
             return dates;
-        }
-
-        public static Table GenerateConsoleTable(this IEnumerable<AttendeeSummary> items)
-        {
-            var scheduleTable = new Table();
-
-            scheduleTable.AddColumns(
-                "Attendees",
-                "AdjustedStartDate",
-                "AdjustedEndDate",
-                "AdjustedDuration",
-                "Weekdays",
-                "Weekends",
-                "Holidays",
-                "TotalDays",
-                "Notes");
-
-            scheduleTable.Columns[4].RightAligned();            
-            scheduleTable.Columns[5].RightAligned();            
-            scheduleTable.Columns[6].RightAligned();            
-            scheduleTable.Columns[7].RightAligned();
-            
-            foreach (var e in items)
-            {
-                scheduleTable.AddRow(
-                    e.Attendee,
-                    e.AdjustedStartDateLocal,
-                    e.AdjustedEndDateLocal,
-                    e.AdjustedDuration,
-                    e.WeekdayCount.ToString(),
-                    e.WeekendCount.ToString(),
-                    e.HolidayCount.ToString(),
-                    e.TotalDays.ToString(),
-                    e.Notes
-                );
-            }
-
-            return scheduleTable;
-        }
-        
-        public static void WriteToConsole(this IEnumerable<AttendeeSummary> items)
-        {
-            var table = items.GenerateConsoleTable();
-            AnsiConsole.Write(table);
-        }
-        
-        public static void WriteToCsv(this IEnumerable<AttendeeSummary> items, string path)
-        {
-            using var writer = new StreamWriter(path);
-            using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
-            var records = items.ToList();
-            csv.WriteRecords(records);   
         }
     }
 }

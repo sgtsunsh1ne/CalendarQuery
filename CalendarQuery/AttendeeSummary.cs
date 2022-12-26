@@ -41,9 +41,6 @@ namespace CalendarQuery
             }
         }
         
-        public string ApprovedBy => string.Empty;
-        public string ApprovedOn => string.Empty;
-        
         private IList<RosteredEvent> RosteredEvents { get; }
         
         private bool RosteredEventsContainsConflicts
