@@ -1,0 +1,51 @@
+Attendee,CalendarName,AdjustedStartDate,AdjustedEndDate,AdjustedDuration,WeekdayCount,WeekendCount,HolidayCount,TotalDays,Notes
+john.doe@example.com,"On Call Schedule for Value Stream A.ics
+On Call Schedule for Value Stream B.ics
+On Call Schedule for Value Stream A.ics
+","Thu 01 Dec 22 08:30 AM
+Mon 12 Dec 22 08:00 AM
+Mon 26 Dec 22 08:30 AM
+","Mon 05 Dec 22 08:30 AM
+Mon 19 Dec 22 08:00 AM
+Sun 01 Jan 23 08:30 AM
+","4 days
+7 days
+6 days
+",10,5,2,17,
+jane.doe@example.com,"On Call Schedule for Value Stream B.ics
+On Call Schedule for Value Stream A.ics
+","Thu 01 Dec 22 08:00 AM
+Mon 05 Dec 22 08:30 AM
+","Mon 05 Dec 22 08:00 AM
+Mon 19 Dec 22 08:30 AM
+","4 days
+14 days
+",12,6,0,18,
+alice.doe@example.com,"On Call Schedule for Value Stream B.ics
+On Call Schedule for Value Stream A.ics
+","Mon 05 Dec 22 08:00 AM
+Mon 19 Dec 22 08:30 AM
+","Mon 12 Dec 22 08:00 AM
+Mon 26 Dec 22 08:30 AM
+","7 days
+7 days
+",10,3,1,14,
+bob.doe@example.com,"On Call Schedule for Value Stream B.ics
+","Mon 19 Dec 22 08:00 AM
+","Mon 26 Dec 22 08:30 AM
+","7 days
+",5,1,1,7,
+alex.doe@example.com,"On Call Schedule for Value Stream C.ics
+On Call Schedule for Value Stream C.ics
+On Call Schedule for Value Stream A.ics
+","Mon 12 Dec 22 00:00 AM
+Tue 13 Dec 22 00:00 AM
+Wed 14 Dec 22 09:36 AM
+","Mon 12 Dec 22 08:24 AM
+Mon 19 Dec 22 00:00 AM
+Wed 14 Dec 22 12:00 PM
+","0 days
+6 days
+0 days
+",4,2,0,6,"Events overlap.  Counts may be wrong.
+"
