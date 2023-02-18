@@ -30,7 +30,10 @@ namespace CalendarQuery.Extensions
 
         public static bool FilterByAttendees(this CalendarEvent ev, IList<string> attendees)
         {
-            return attendees.Count == 0 || attendees.Contains(ev.Attendees.SanitiseAttendees());
+            return attendees.Count == 0 || 
+                   attendees
+                       .Select(i => i.ToLowerInvariant())
+                       .Contains(ev.Attendees.SanitiseAttendees());
         }
 
         public static Table GenerateConsoleTable(this IEnumerable<AttendeeSummary> items)

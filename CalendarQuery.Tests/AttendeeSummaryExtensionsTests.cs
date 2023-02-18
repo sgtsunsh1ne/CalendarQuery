@@ -60,7 +60,7 @@ namespace CalendarQuery.Tests
 
             var events = calendars
                 .SelectMany(i => i.Value.Events)
-                .Where(e => e.FilterByAttendees(new List<string> {"user.one@contoso.com"}))
+                .Where(e => e.FilterByAttendees(new List<string> {"User.One@contoso.com"}))
                 .ToList();
             
             Assert.That(calendars.First().Value.Events.Count, Is.EqualTo(6)); // Before filter

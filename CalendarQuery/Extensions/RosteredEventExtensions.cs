@@ -10,7 +10,7 @@ namespace CalendarQuery.Extensions
         public static string SanitiseAttendees(this ICollection<Attendee> attendees)
         {
             return string.Join(", ", attendees
-                .Select(i => i.Value.OriginalString)
+                .Select(i => i.Value.OriginalString.ToLowerInvariant())
                 .Select(i => i.Replace("mailto:", string.Empty)));
         }
 
