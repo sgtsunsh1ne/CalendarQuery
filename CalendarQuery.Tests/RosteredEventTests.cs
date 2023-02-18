@@ -76,7 +76,7 @@ namespace CalendarQuery.Tests
                 {
                     Utility.CalendarEvent("28 Nov 22 08:30 AM", "05 Dec 22 08:30 AM", "user1@contoso.com"),
                     "user1@contoso.com",
-                    "01 Dec 22 08:30 AM",
+                    "01 Dec 22 00:00 AM",
                     "05 Dec 22 08:30 AM",
                     "4 days",
                     2,
@@ -154,10 +154,10 @@ namespace CalendarQuery.Tests
                 // Then AdjustedDuration is 0 days
                 new object[]
                 {
-                    Utility.CalendarEvent("19 Dec 22 00:00 AM", "19 Dec 22 11:00 AM", "user1@contoso.com"),
+                    Utility.CalendarEvent("19 Dec 22 00:00 AM", "19 Dec 22 11:59 AM", "user1@contoso.com"),
                     "user1@contoso.com",
                     "19 Dec 22 00:00 AM", 
-                    "19 Dec 22 11:00 AM", 
+                    "19 Dec 22 11:59 AM", 
                     "0 days",
                     0,
                     0,
@@ -165,6 +165,7 @@ namespace CalendarQuery.Tests
                     "December",
                     new List<DateTime>()
                 },
+                
                 // Public Holiday Tests
                 new object[]
                 {
@@ -186,7 +187,54 @@ namespace CalendarQuery.Tests
                         new(2023, 01, 02),
                         new(2023, 01, 03)
                     }
-                }
-            };
+                },
+                
+                // If attendee started late at night, don't include that night as a DayWorked.
+                new object[]
+                {
+                    Utility.CalendarEvent("17 Jan 23 20:00 PM", "23 Jan 23 00:00 AM", "user1@contoso.com"),
+                    "user1@contoso.com",
+                    "17 Jan 23 20:00 PM",
+                    "23 Jan 23 00:00 AM",
+                    "5 days",
+                    3,
+                    2,
+                    0,
+                    "January",
+                    new List<DateTime>()
+                },
+                
+                // If attendee started late at night _and_ the shift overlaps between two months
+                // Then adjust to begin on 1st of the month at midnight
+                new object[]
+                {
+                    Utility.CalendarEvent("28 Nov 22 20:30 PM", "05 Dec 22 08:30 AM", "user1@contoso.com"),
+                    "user1@contoso.com",
+                    "01 Dec 22 00:00 AM",
+                    "05 Dec 22 08:30 AM",
+                    "4 days",
+                    2,
+                    2,
+                    0,
+                    "December",
+                    new List<DateTime>()
+                },
+                
+                // If attendee started just after 12pm, that day doesn't count
+                // Reason -- attendee must work >12 hours to qualify for DayWorked
+                new object[]
+                {
+                    Utility.CalendarEvent("17 Jan 23 12:01 PM", "23 Jan 23 00:00 AM", "user1@contoso.com"),
+                    "user1@contoso.com",
+                    "17 Jan 23 12:01 PM",
+                    "23 Jan 23 00:00 AM",
+                    "5 days",
+                    3,
+                    2,
+                    0,
+                    "January",
+                    new List<DateTime>()
+                },
+        };
     }
 }

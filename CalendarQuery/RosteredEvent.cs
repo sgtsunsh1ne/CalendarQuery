@@ -35,13 +35,15 @@ namespace CalendarQuery
                 
                 if (startMonthFallsOutsideOfCurrentMonth)
                 {   
+                    // If shift overlaps between two months, then
+                    // Only start counting from first day of the month
                     var firstDayOfCurrentMonth = new DateTime(
                         EndDateLocal.Year,
                         EndDateLocal.Month,
                         1,
-                        StartDateLocal.Hour,
-                        StartDateLocal.Minute,
-                        StartDateLocal.Second);
+                        0,
+                        0,
+                        0);
 
                     return firstDayOfCurrentMonth;
                 }
@@ -82,7 +84,37 @@ namespace CalendarQuery
         public int WeekendCount          => Weekends.Count() - WeekendHolidays.Count();
         public int PublicHolidayCount    => WeekdayHolidays.Count() + WeekendHolidays.Count();
 
-        private IEnumerable<DateTime> DaysWorked    => AdjustedStartDateLocal.GetDates(AdjustedDuration.Days);
+        private IEnumerable<DateTime> DaysWorked
+        {
+            get
+            {
+                // Bug Fix to handle scenario where people start their shift after 12pm
+                //
+                // To qualify for working on a given day, they have to work at least 12 hours.
+                //
+                // E.g. If person starts working anytime _after_ Sunday 12 PM, then
+                //      (1) Exclude Sunday as their DayWorked (they don't get the weekend)
+                //      (2) Start counting from Monday
+                //
+                // E.g. If person's shift starts at 10PM, that day is excluded from DaysWorked.
+                
+                if (AdjustedStartDateLocal.Hour >= 12)
+                {
+                    var newStartDate = AdjustedStartDateLocal.AddDays(1);
+                    var dt = new DateTime(
+                        newStartDate.Year,
+                        newStartDate.Month,
+                        newStartDate.Day,
+                        0, 
+                        0, 
+                        0);
+                    
+                    return dt.GetDates(AdjustedDuration.Days);
+                }
+                
+                return AdjustedStartDateLocal.GetDates(AdjustedDuration.Days);
+            }
+        }
         private IEnumerable<string> Weekdays        => DaysWorked.AreWeekdays();
         private IEnumerable<string> Weekends        => DaysWorked.AreWeekends();
         private IEnumerable<string> WeekdayHolidays => _holidays.AreWeekdays().Intersect(Weekdays);
