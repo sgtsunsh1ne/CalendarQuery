@@ -83,6 +83,7 @@ namespace CalendarQuery
         public int WeekdayCount          => Weekdays.Count() - WeekdayHolidays.Count();
         public int WeekendCount          => Weekends.Count() - WeekendHolidays.Count();
         public int PublicHolidayCount    => WeekdayHolidays.Count() + WeekendHolidays.Count();
+        public bool StartedAfterMidday   => AdjustedStartDateLocal.Hour >= 12;
 
         private IEnumerable<DateTime> DaysWorked
         {
@@ -98,7 +99,7 @@ namespace CalendarQuery
                 //
                 // E.g. If person's shift starts at 10PM, that day is excluded from DaysWorked.
                 
-                if (AdjustedStartDateLocal.Hour >= 12)
+                if (StartedAfterMidday)
                 {
                     var newStartDate = AdjustedStartDateLocal.AddDays(1);
                     var dt = new DateTime(

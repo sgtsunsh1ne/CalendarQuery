@@ -55,7 +55,7 @@ namespace CalendarQuery
                 .Select(attendeeEvents => new AttendeeSummary(attendeeEvents.Key, attendeeEvents))
                 .ToList();
             
-            // create report
+            // report data
             attendeeSummaryReport.WriteToConsole();
             attendeeSummaryReport.WriteToCsv(r, $"{filePath}/{r}-{DateTime.Now:yyyyMMddHHmmss}.csv");
         }
