@@ -31,7 +31,7 @@ namespace CalendarQuery
             [Option("r", "ReportType  - AttendeeSummary | AttendeeSummaryVerbose")] ReportType r = ReportType.AttendeeSummary,
             [Option("refresh", "Refresh calendars - retrieve *ICS files from URLs again")] bool refresh = false)
         {
-            // read arguments
+            // retrieve data
             var icsFiles = await c.GetUrlContentsAsync();
             var attendees = await a.GetAttendeesAsync();
             var holidays = await h.GetHolidaysAsync();
