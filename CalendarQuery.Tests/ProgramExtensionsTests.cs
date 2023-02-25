@@ -79,7 +79,7 @@ namespace CalendarQuery.Tests
             var filename = contents.First().Key;
             var filePath = $"{path}/{filename}";
             
-            contents.WriteToDisk(path);
+            await contents.WriteToDiskAsync(path, false);
             
             Assert.IsTrue(File.Exists(filePath));
             

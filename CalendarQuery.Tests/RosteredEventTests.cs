@@ -222,6 +222,7 @@ namespace CalendarQuery.Tests
                 
                 // If attendee started just after 12pm, that day doesn't count
                 // Reason -- attendee must work >12 hours to qualify for DayWorked
+                // Scenario 1
                 new object[]
                 {
                     Utility.CalendarEvent("17 Jan 23 12:01 PM", "23 Jan 23 00:00 AM", "user1@contoso.com"),
@@ -231,6 +232,40 @@ namespace CalendarQuery.Tests
                     "5 days",
                     3,
                     2,
+                    0,
+                    "January",
+                    new List<DateTime>()
+                },
+                
+                // If attendee started just after 12pm, that day doesn't count
+                // Reason -- attendee must work >12 hours to qualify for DayWorked
+                // Scenario 2
+                new object[]
+                {
+                    Utility.CalendarEvent("17 Jan 23 21:00 PM", "18 Jan 23 03:00 AM", "user1@contoso.com"),
+                    "user1@contoso.com",
+                    "17 Jan 23 21:00 PM",
+                    "18 Jan 23 03:00 AM",
+                    "0 days",
+                    0,
+                    0,
+                    0,
+                    "January",
+                    new List<DateTime>()
+                },
+                
+                // If attendee started just after 12pm, that day doesn't count
+                // Reason -- attendee must work >12 hours to qualify for DayWorked
+                // Scenario 3
+                new object[]
+                {
+                    Utility.CalendarEvent("17 Jan 23 21:00 PM", "19 Jan 23 00:00 AM", "user1@contoso.com"),
+                    "user1@contoso.com",
+                    "17 Jan 23 21:00 PM",
+                    "19 Jan 23 00:00 AM",
+                    "1 day",
+                    1,
+                    0,
                     0,
                     "January",
                     new List<DateTime>()

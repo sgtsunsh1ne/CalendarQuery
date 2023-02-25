@@ -88,12 +88,22 @@ namespace CalendarQuery.Extensions
             return !string.IsNullOrEmpty(filename);
         }
         
-        public static void WriteToDisk(this Dictionary<string, string> contents, string path)
+        public static async Task WriteToDiskAsync(this Dictionary<string, string> contents, string path, bool refresh)
         {
+            if (refresh)
+            {
+                Directory.Delete(path, true);
+            }
+
+            if (Directory.Exists(path)) return;
+            
             Directory.CreateDirectory(path);
+            
             foreach (var (filename, content) in contents)
             {
-                File.WriteAllTextAsync($"{path}/{filename}", content);
+                if (File.Exists(filename)) continue;
+                
+                await File.WriteAllTextAsync($"{path}/{filename}", content);
             }
         }
 
@@ -153,6 +163,24 @@ namespace CalendarQuery.Extensions
             }
 
             return dates;
+        }
+
+        public static async Task<Dictionary<string, string>> GetFileContentsAsync(this string filePath)
+        {
+            var files = Directory.GetFiles(filePath, "*.ics");
+            
+            var contents = new Dictionary<string, string>();
+
+            foreach (var fileName in files)
+            {
+                var content = await File.ReadAllTextAsync(fileName);
+
+                var fileInfo = new FileInfo(fileName);
+                
+                contents.Add(fileInfo.Name, content);
+            }
+
+            return contents;
         }
     }
 }
