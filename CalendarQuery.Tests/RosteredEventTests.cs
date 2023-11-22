@@ -10,7 +10,7 @@ namespace CalendarQuery.Tests
     public class RosteredEventTests
     {
         [TestCaseSource(nameof(ExpectedRosteredEvents))]
-        public void RosteredEvent_ExtractsDataFromCalendarEventCorrectly(
+        public void RosteredEvent_CalculatesDaysCorrectly(
             CalendarEvent calendarEvent, 
             string expectedAttendee,
             string expectedAdjustedStartDate,
@@ -58,8 +58,8 @@ namespace CalendarQuery.Tests
                 // Standard 7-day scenario
                 new object[]
                 {
-                    Utility.CalendarEvent("01 Dec 22 00:00 AM", "08 Dec 22 00:00 AM", "user1@contoso.com"),
-                    "user1@contoso.com",
+                    Utility.CalendarEvent("01 Dec 22 00:00 AM", "08 Dec 22 00:00 AM", "standard7days@contoso.com"),
+                    "standard7days@contoso.com",
                     "01 Dec 22 00:00 AM",
                     "08 Dec 22 00:00 AM",
                     "7 days",
@@ -106,8 +106,8 @@ namespace CalendarQuery.Tests
                 // Then AdjustedDuration is 7 days
                 new object[]
                 {
-                    Utility.CalendarEvent("19 Dec 22 00:00 AM", "25 Dec 22 23:00 PM", "user1@contoso.com"),
-                    "user1@contoso.com",
+                    Utility.CalendarEvent("19 Dec 22 00:00 AM", "25 Dec 22 23:00 PM", "worked_6_days_23_hours@contoso.com"),
+                    "worked_6_days_23_hours@contoso.com",
                     "19 Dec 22 00:00 AM",
                     "25 Dec 22 23:00 PM",
                     "7 days",
@@ -122,8 +122,8 @@ namespace CalendarQuery.Tests
                 // Then AdjustedDuration is 7 days
                 new object[]
                 {
-                    Utility.CalendarEvent("19 Dec 22 00:00 AM", "25 Dec 22 12:00 PM", "user1@contoso.com"),
-                    "user1@contoso.com",
+                    Utility.CalendarEvent("19 Dec 22 00:00 AM", "25 Dec 22 12:00 PM", "worked_6_days_12_hours@contoso.com"),
+                    "worked_6_days_12_hours@contoso.com",
                     "19 Dec 22 00:00 AM",
                     "25 Dec 22 12:00 PM",
                     "7 days",
@@ -138,8 +138,8 @@ namespace CalendarQuery.Tests
                 // Then AdjustedDuration is 6 days
                 new object[]
                 {
-                    Utility.CalendarEvent("19 Dec 22 00:00 AM", "25 Dec 22 11:00 AM", "user1@contoso.com"),
-                    "user1@contoso.com",
+                    Utility.CalendarEvent("19 Dec 22 00:00 AM", "25 Dec 22 11:00 AM", "worked_6_days_11_hours@contoso.com"),
+                    "worked_6_days_11_hours@contoso.com",
                     "19 Dec 22 00:00 AM",
                     "25 Dec 22 11:00 AM",
                     "6 days",
@@ -154,8 +154,8 @@ namespace CalendarQuery.Tests
                 // Then AdjustedDuration is 0 days
                 new object[]
                 {
-                    Utility.CalendarEvent("19 Dec 22 00:00 AM", "19 Dec 22 11:59 AM", "user1@contoso.com"),
-                    "user1@contoso.com",
+                    Utility.CalendarEvent("19 Dec 22 00:00 AM", "19 Dec 22 11:59 AM", "worked_11_hours@contoso.com"),
+                    "worked_11_hours@contoso.com",
                     "19 Dec 22 00:00 AM", 
                     "19 Dec 22 11:59 AM", 
                     "0 days",
@@ -169,8 +169,8 @@ namespace CalendarQuery.Tests
                 // Public Holiday Tests
                 new object[]
                 {
-                    Utility.CalendarEvent("26 Dec 22 00:00 AM", "12 Jan 23 00:00 AM", "user1@contoso.com"),
-                    "user1@contoso.com",
+                    Utility.CalendarEvent("26 Dec 22 00:00 AM", "12 Jan 23 00:00 AM", "worked_holidays@contoso.com"),
+                    "worked_holidays@contoso.com",
                     "26 Dec 22 00:00 AM", 
                     "01 Jan 23 00:00 AM", 
                     "6 days",
