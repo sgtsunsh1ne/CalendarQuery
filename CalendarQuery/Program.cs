@@ -53,6 +53,8 @@ namespace CalendarQuery
                 .Select(i => new RosteredEvent(i, month, holidays))
                 .GroupBy(i => i.Attendees)
                 .Select(attendeeEvents => new AttendeeSummary(attendeeEvents.Key, attendeeEvents))
+                .OrderBy(i => i.CalendarName)
+                .ThenBy(i => i.Attendee)
                 .ToList();
             
             // report data
