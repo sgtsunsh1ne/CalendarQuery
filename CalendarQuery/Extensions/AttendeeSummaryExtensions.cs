@@ -63,9 +63,9 @@ namespace CalendarQuery.Extensions
                     e.AdjustedStartDateLocal,
                     e.AdjustedEndDateLocal,
                     e.AdjustedDuration,
-                    e.WeekdayCount.ToString(),
-                    e.WeekendCount.ToString(),
-                    e.HolidayCount.ToString(),
+                    e.WeekdayTotal.ToString(),
+                    e.WeekendTotal.ToString(),
+                    e.HolidayTotal.ToString(),
                     e.TotalDays.ToString(),
                     e.Notes
                 );
@@ -95,11 +95,13 @@ namespace CalendarQuery.Extensions
                 record.CalendarName      = e.CalendarName;
                 record.AdjustedStartDate = e.AdjustedStartDateLocal;
                 record.AdjustedEndDate   = e.AdjustedEndDateLocal;
-                record.AdjustedDuration  = e.AdjustedDuration;
-                record.WeekdayCount      = e.WeekdayCount;
-                record.WeekendCount      = e.WeekendCount;
-                record.HolidayCount      = e.HolidayCount;
-                record.TotalDays         = e.WeekdayCount + e.WeekendCount + e.HolidayCount;
+                record.Duration          = e.AdjustedDuration;
+                record.DurationInDays    = e.AdjustedDurationToNearestDay;
+                record.Breakdown         = e.Breakdown;
+                record.WeekdayTotal      = e.WeekdayTotal;
+                record.WeekendTotal      = e.WeekendTotal;
+                record.HolidayTotal      = e.HolidayTotal;
+                record.TotalDays         = e.WeekdayTotal + e.WeekendTotal + e.HolidayTotal;
                 record.Notes             = e.Notes;
 
                 records.Add(record);                

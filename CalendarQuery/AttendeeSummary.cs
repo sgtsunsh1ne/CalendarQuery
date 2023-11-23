@@ -14,17 +14,20 @@ namespace CalendarQuery
         }
         
         public string Attendee { get; }
-        public string CalendarName           => RosteredEvents.Aggregate(string.Empty, (c, i) => c + $"{i.CalendarName}\n");
-        public string ActualStartDateLocal   => RosteredEvents.Aggregate(string.Empty, (c, i) => c + $"{i.StartDateLocal:ddd dd MMM yy HH:mm tt}\n");
-        public string ActualEndDateLocal     => RosteredEvents.Aggregate(string.Empty, (c, i) => c + $"{i.EndDateLocal:ddd dd MMM yy HH:mm tt}\n");
-        public string ActualDuration         => RosteredEvents.Aggregate(string.Empty, (c, i) => c + $"{i.ActualDuration.Humanize(maxUnit:TimeUnit.Day, precision: 3)}\n");
-        public string AdjustedStartDateLocal => RosteredEvents.Aggregate(string.Empty, (c, i) => c + $"{i.AdjustedStartDateLocal:ddd dd MMM yy HH:mm tt}\n");
-        public string AdjustedEndDateLocal   => RosteredEvents.Aggregate(string.Empty, (c, i) => c + $"{i.AdjustedEndDateLocal:ddd dd MMM yy HH:mm tt}\n");
-        public string AdjustedDuration       => RosteredEvents.Aggregate(string.Empty, (c, i) => c + $"{i.AdjustedDuration.Humanize(maxUnit: TimeUnit.Day, minUnit:TimeUnit.Day, precision: 3)}\n");
-        public int WeekdayCount              => RosteredEvents.Sum(i => i.WeekdayCount);
-        public int WeekendCount              => RosteredEvents.Sum(i => i.WeekendCount);
-        public int HolidayCount              => RosteredEvents.Sum(i => i.PublicHolidayCount);
-        public int TotalDays                 => WeekdayCount + WeekendCount + HolidayCount;
+        public string CalendarName                 => RosteredEvents.Aggregate(string.Empty, (c, i) => c + $"{i.CalendarName}\n");
+        public string ActualStartDateLocal         => RosteredEvents.Aggregate(string.Empty, (c, i) => c + $"{i.StartDateLocal:ddd dd MMM yy HH:mm tt}\n");
+        public string ActualEndDateLocal           => RosteredEvents.Aggregate(string.Empty, (c, i) => c + $"{i.EndDateLocal:ddd dd MMM yy HH:mm tt}\n");
+        public string ActualDuration               => RosteredEvents.Aggregate(string.Empty, (c, i) => c + $"{i.ActualDuration.Humanize(maxUnit:TimeUnit.Day, precision: 3)}\n");
+        public string AdjustedStartDateLocal       => RosteredEvents.Aggregate(string.Empty, (c, i) => c + $"{i.AdjustedStartDateLocal:ddd dd MMM yy HH:mm tt}\n");
+        public string AdjustedEndDateLocal         => RosteredEvents.Aggregate(string.Empty, (c, i) => c + $"{i.AdjustedEndDateLocal:ddd dd MMM yy HH:mm tt}\n");
+        public string AdjustedDuration             => RosteredEvents.Aggregate(string.Empty, (c, i) => c + $"{i.AdjustedDuration.Humanize(maxUnit:TimeUnit.Day, precision: 3)}\n");
+        public string AdjustedDurationToNearestDay => RosteredEvents.Aggregate(string.Empty, (c, i) => c + $"{i.AdjustedDurationToNearestDay.Humanize(maxUnit:TimeUnit.Day, minUnit:TimeUnit.Day, precision: 3)}\n");
+        public string Breakdown => RosteredEvents.Aggregate(string.Empty, (c, i) => c + 
+            $"{i.WeekdayCount} WD, {i.WeekendCount} WE, {i.PublicHolidayCount} PH \n");
+        public int WeekdayTotal                    => RosteredEvents.Sum(i => i.WeekdayCount);
+        public int WeekendTotal                    => RosteredEvents.Sum(i => i.WeekendCount);
+        public int HolidayTotal                    => RosteredEvents.Sum(i => i.PublicHolidayCount);
+        public int TotalDays                       => WeekdayTotal + WeekendTotal + HolidayTotal;
 
         public string Notes
         {

@@ -79,7 +79,8 @@ namespace CalendarQuery
             }
         }
 
-        public TimeSpan AdjustedDuration => AdjustedEndDateLocal.Subtract(AdjustedStartDateLocal).RoundToNearestDay();
+        public TimeSpan AdjustedDuration => AdjustedEndDateLocal.Subtract(AdjustedStartDateLocal);
+        public TimeSpan AdjustedDurationToNearestDay => AdjustedDuration.RoundToNearestDay();
         public int WeekdayCount          => Weekdays.Count() - WeekdayHolidays.Count();
         public int WeekendCount          => Weekends.Count() - WeekendHolidays.Count();
         public int PublicHolidayCount    => WeekdayHolidays.Count() + WeekendHolidays.Count();
@@ -117,10 +118,10 @@ namespace CalendarQuery
                         0, 
                         0);
                     
-                    return dt.GetDates(AdjustedDuration.Days);
+                    return dt.GetDates(AdjustedDurationToNearestDay.Days);
                 }
                 
-                return AdjustedStartDateLocal.GetDates(AdjustedDuration.Days);
+                return AdjustedStartDateLocal.GetDates(AdjustedDurationToNearestDay.Days);
             }
         }
         private IEnumerable<string> Weekdays        => DaysWorked.AreWeekdays();

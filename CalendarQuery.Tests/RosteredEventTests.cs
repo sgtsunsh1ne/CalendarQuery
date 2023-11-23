@@ -40,7 +40,7 @@ namespace CalendarQuery.Tests
                 Is.EqualTo(expectedAdjustedEndDate));
 
             Assert.That(
-                sut.AdjustedDuration.Humanize(maxUnit:TimeUnit.Day, minUnit:TimeUnit.Day),
+                sut.AdjustedDurationToNearestDay.Humanize(maxUnit:TimeUnit.Day, minUnit:TimeUnit.Day),
                 Is.EqualTo(expectedAdjustedDuration));
             
             Assert.That(sut.WeekdayCount, Is.EqualTo(expectedWeekdayCount));
@@ -49,7 +49,7 @@ namespace CalendarQuery.Tests
             
             Assert.That(
                 sut.WeekdayCount + sut.WeekendCount + sut.PublicHolidayCount, 
-                Is.EqualTo(sut.AdjustedDuration.Days));
+                Is.EqualTo(sut.AdjustedDurationToNearestDay.Days));
         }
 
         public static IEnumerable<object[]> ExpectedRosteredEvents =>
