@@ -270,6 +270,21 @@ namespace CalendarQuery.Tests
                     "January",
                     new List<DateTime>()
                 },
+                 
+                // Midday Test
+                new object[]
+                {
+                    Utility.CalendarEvent("22 Sep 23 12:00 PM", "23 Sep 23 00:00 AM", "midday@contoso.com"),
+                    "midday@contoso.com",
+                    "22 Sep 23 12:00 PM",
+                    "23 Sep 23 00:00 AM",
+                    "1 day",
+                    1,
+                    0,
+                    0,
+                    "September",
+                    new List<DateTime>()
+                },
         };
     }
 }

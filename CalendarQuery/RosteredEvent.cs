@@ -83,7 +83,14 @@ namespace CalendarQuery
         public int WeekdayCount          => Weekdays.Count() - WeekdayHolidays.Count();
         public int WeekendCount          => Weekends.Count() - WeekendHolidays.Count();
         public int PublicHolidayCount    => WeekdayHolidays.Count() + WeekendHolidays.Count();
-        public bool StartedAfterMidday   => AdjustedStartDateLocal.Hour >= 12;
+            
+        public bool StartedAfterMidday   => AdjustedStartDateLocal > new DateTime(
+                                                AdjustedStartDateLocal.Year,
+                                                AdjustedStartDateLocal.Month,
+                                                AdjustedStartDateLocal.Day,
+                                                12, 
+                                                0, 
+                                                0);
 
         private IEnumerable<DateTime> DaysWorked
         {
