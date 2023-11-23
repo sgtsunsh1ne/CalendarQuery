@@ -74,8 +74,8 @@ namespace CalendarQuery.Tests
                 // Then AdjustedDuration is 4 days because StartDateLocal has been adjusted to 1st day of month
                 new object[]
                 {
-                    Utility.CalendarEvent("28 Nov 22 08:30 AM", "05 Dec 22 08:30 AM", "user1@contoso.com"),
-                    "user1@contoso.com",
+                    Utility.CalendarEvent("28 Nov 22 08:30 AM", "05 Dec 22 08:30 AM", "from_previous_month@contoso.com"),
+                    "from_previous_month@contoso.com",
                     "01 Dec 22 00:00 AM",
                     "05 Dec 22 08:30 AM",
                     "4 days",
@@ -90,16 +90,35 @@ namespace CalendarQuery.Tests
                 // Then AdjustedDuration is 6 days because EndDateLocal has been adjusted to 1st day of month
                 new object[]
                 {
-                    Utility.CalendarEvent("26 Dec 22 08:30 AM", "02 Jan 23 08:30 AM", "user1@contoso.com"),
-                    "user1@contoso.com",
+                    Utility.CalendarEvent("26 Dec 22 08:30 AM", "02 Jan 23 08:30 AM", "beyond_this_month@contoso.com"),
+                    "beyond_this_month@contoso.com",
                     "26 Dec 22 08:30 AM",
-                    "01 Jan 23 08:30 AM",
+                    "01 Jan 23 00:00 AM",
                     "6 days",
                     5,
                     1,
                     0,
                     "December",
                     new List<DateTime>()
+                },
+                
+                new object[]
+                {
+                    Utility.CalendarEvent("26 Dec 22 08:30 AM", "02 Jan 23 08:30 AM", "test_for_next_month@contoso.com"),
+                    "test_for_next_month@contoso.com",
+                    "01 Jan 23 00:00 AM",
+                    "02 Jan 23 08:30 AM",
+                    "1 day",
+                    0,
+                    0,
+                    1,
+                    "January",
+                    new List<DateTime>
+                    {
+                        new(2023, 01, 01),
+                        new(2023, 01, 02),
+                        new(2023, 01, 03)
+                    }
                 },
                 
                 // If attendee worked 6 days 23 hours

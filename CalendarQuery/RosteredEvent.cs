@@ -63,14 +63,14 @@ namespace CalendarQuery
                 if (endMonthFallsOutsideOfCurrentMonth)
                 {
                     var nextMonth = StartDateLocal.AddMonths(1);
-                    
+
                     var firstDayOfNextMonth = new DateTime(
                         nextMonth.Year,
                         nextMonth.Month,
                         1,
-                        EndDateLocal.Hour,
-                        EndDateLocal.Minute,
-                        EndDateLocal.Second);
+                        0,
+                        0,
+                        0);
 
                     return firstDayOfNextMonth;
                 }
