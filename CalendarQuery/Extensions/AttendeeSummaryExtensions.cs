@@ -96,7 +96,7 @@ namespace CalendarQuery.Extensions
                 record.AdjustedStartDate = e.AdjustedStartDateLocal;
                 record.AdjustedEndDate   = e.AdjustedEndDateLocal;
                 record.Duration          = e.AdjustedDuration;
-                record.DurationInDays    = e.AdjustedDurationToNearestDay;
+                record.DurationInDays    = e.NoOfDaysWorked;
                 record.Breakdown         = e.Breakdown;
                 record.WeekdayTotal      = e.WeekdayTotal;
                 record.WeekendTotal      = e.WeekendTotal;
