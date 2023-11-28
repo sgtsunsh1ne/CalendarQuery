@@ -11,18 +11,29 @@ namespace CalendarQuery
         private readonly CalendarEvent _calendarEvent;
         private readonly int _month;
         private readonly IEnumerable<DateTime> _holidays;
+        private readonly string _timezone;
         
-        public RosteredEvent(CalendarEvent calendarEvent, int month, IEnumerable<DateTime> holidays)
+        public RosteredEvent(
+            CalendarEvent calendarEvent, 
+            int month, 
+            IEnumerable<DateTime> holidays,
+            string timezone)
         {
             _calendarEvent = calendarEvent;
             _month = month;
             _holidays = holidays;
+            _timezone = timezone;
         }
 
         public string CalendarName     => _calendarEvent.Calendar.Name;
         public string Attendees        => _calendarEvent.Attendees.SanitiseAttendees();
-        public DateTime StartDateLocal => _calendarEvent.Start.AsSystemLocal;
-        public DateTime EndDateLocal   => _calendarEvent.End.AsSystemLocal;
+
+        public DateTime StartDateLocal => TimeZoneInfo
+            .ConvertTimeFromUtc(_calendarEvent.Start.AsUtc, TimeZoneInfo.FindSystemTimeZoneById(_timezone));
+
+        public DateTime EndDateLocal => TimeZoneInfo
+            .ConvertTimeFromUtc(_calendarEvent.End.AsUtc, TimeZoneInfo.FindSystemTimeZoneById(_timezone));
+
         public TimeSpan ActualDuration => _calendarEvent.Duration;
         
         public DateTime AdjustedStartDateLocal
