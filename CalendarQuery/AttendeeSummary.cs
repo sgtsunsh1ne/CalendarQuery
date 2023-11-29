@@ -41,7 +41,7 @@ namespace CalendarQuery
 
                 if (RosteredEventsContainsEventsThatStartAfterMidday)
                 {
-                    notes += $"Attendee has shifts that start after midday.  Their first day may excluded from the count.\n";
+                    notes += $"Attendee has shifts that start after midday.  Their first day may be excluded from the count.\n";
                 }
 
                 return notes;
