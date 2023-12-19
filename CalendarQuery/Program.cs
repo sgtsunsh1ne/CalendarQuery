@@ -26,9 +26,9 @@ namespace CalendarQuery
         public async Task Run(
             [Option("c", "Calendar(s) - Accepts single URL, or TXT file containing list of URLs")] string c,
             [Option("m", "Month       - Accepts month, or if none provided, the current month will be used.")] int m,
-            [Option("a", "Attendee(s) - Accepts single email or TXT file contains list of emails")] string a,
             [Option("h", "Holiday(s)  - Accepts multiple dates (yyyy-MM-dd) as comma-separated values, or TXT file containing list of dates (yyyy-MM-dd)")] string h,
             [Option("t", "Timezone    - Accepts standard Timezone Names i.e. \"New Zealand Standard Time\", \"Central Standard Time\"")] string t,
+            [Option("a", "Attendee(s)   - Accepts single email or TXT file contains list of emails")] string a = "",
             [Option("r", "ReportType  - AttendeeSummary | AttendeeSummaryVerbose")] ReportType r = ReportType.AttendeeSummary,
             [Option("refresh", "Refresh calendars - retrieve *ICS files from URLs again")] bool refresh = false)
         {
