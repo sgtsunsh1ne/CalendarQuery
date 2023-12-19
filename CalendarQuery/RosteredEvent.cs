@@ -12,17 +12,20 @@ namespace CalendarQuery
         private readonly int _month;
         private readonly IEnumerable<DateTime> _holidays;
         private readonly string _timezone;
+        private readonly int _shiftHour;
         
         public RosteredEvent(
             CalendarEvent calendarEvent, 
             int month, 
             IEnumerable<DateTime> holidays,
-            string timezone)
+            string timezone,
+            int shiftHour)
         {
             _calendarEvent = calendarEvent;
             _month = month;
             _holidays = holidays;
             _timezone = timezone;
+            _shiftHour = shiftHour;
         }
 
         public string CalendarName     => _calendarEvent.Calendar.Name;
@@ -52,7 +55,7 @@ namespace CalendarQuery
                         EndDateLocal.Year,
                         EndDateLocal.Month,
                         1,
-                        0,
+                        _shiftHour,
                         0,
                         0);
 
@@ -75,11 +78,13 @@ namespace CalendarQuery
                 {
                     var nextMonth = StartDateLocal.AddMonths(1);
 
+                    var startHour = EndDateLocal.Hour < _shiftHour ? EndDateLocal.Hour : _shiftHour;
+                    
                     var firstDayOfNextMonth = new DateTime(
                         nextMonth.Year,
                         nextMonth.Month,
                         1,
-                        0,
+                        startHour,
                         0,
                         0);
 

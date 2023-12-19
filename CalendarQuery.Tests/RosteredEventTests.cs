@@ -24,7 +24,7 @@ namespace CalendarQuery.Tests
         {
             var month = DateTime.ParseExact(monthName, "MMMM", CultureInfo.CurrentCulture).Month;
             
-            var sut = new RosteredEvent(calendarEvent, month, holidays, "New Zealand Standard Time");
+            var sut = new RosteredEvent(calendarEvent, month, holidays, "New Zealand Standard Time", 0);
 
             Assert.That(sut.StartDateLocal, Is.EqualTo(calendarEvent.DtStart.AsSystemLocal));
             Assert.That(sut.EndDateLocal, Is.EqualTo(calendarEvent.DtEnd.AsSystemLocal));

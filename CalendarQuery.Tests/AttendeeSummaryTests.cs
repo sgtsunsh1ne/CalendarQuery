@@ -22,8 +22,8 @@ namespace CalendarQuery.Tests
                 It.IsAny<string>(),
                 new List<RosteredEvent>
                 {
-                    new (ev1, 12, new List<DateTime>(), "New Zealand Standard Time"),
-                    new (ev2, 12, new List<DateTime>(), "New Zealand Standard Time")
+                    new (ev1, 12, new List<DateTime>(), "New Zealand Standard Time", 0),
+                    new (ev2, 12, new List<DateTime>(), "New Zealand Standard Time", 0)
                 });
 
             Assert.That(summary.Notes, Contains.Substring("Counts may be wrong"));
@@ -45,7 +45,7 @@ namespace CalendarQuery.Tests
 
             var roster = calendars
                 .SelectMany(i => i.Value.Events)
-                .Select(i => new RosteredEvent(i, month, new List<DateTime>(), "New Zealand Standard Time"))
+                .Select(i => new RosteredEvent(i, month, new List<DateTime>(), "New Zealand Standard Time", 0))
                 .GroupBy(i => i.Attendees)
                 .Select(i => new AttendeeSummary(i.Key, i));
 
@@ -78,7 +78,7 @@ namespace CalendarQuery.Tests
             var roster = calendars
                 .SelectMany(i => i.Value.Events)
                 .Where(i => i.FilterByMonth(month))
-                .Select(i => new RosteredEvent(i, month, new List<DateTime>(), "New Zealand Standard Time"))
+                .Select(i => new RosteredEvent(i, month, new List<DateTime>(), "New Zealand Standard Time", 0))
                 .GroupBy(i => i.Attendees)
                 .Select(attendeeEvents => new AttendeeSummary(attendeeEvents.Key, attendeeEvents))
                 .ToList();
@@ -109,7 +109,7 @@ namespace CalendarQuery.Tests
             
             var roster = calendars
                 .SelectMany(i => i.Value.Events)
-                .Select(i => new RosteredEvent(i, 11, new List<DateTime>(), "New Zealand Standard Time"))
+                .Select(i => new RosteredEvent(i, 11, new List<DateTime>(), "New Zealand Standard Time", 0))
                 .GroupBy(i => i.Attendees)
                 .Select(attendeeEvents => new AttendeeSummary(attendeeEvents.Key, attendeeEvents))
                 .ToList();

@@ -24,12 +24,13 @@ namespace CalendarQuery
         }
 
         public async Task Run(
-            [Option("c", "Calendar(s) - Accepts single URL, or TXT file containing list of URLs")] string c,
-            [Option("m", "Month       - Accepts month, or if none provided, the current month will be used.")] int m,
-            [Option("h", "Holiday(s)  - Accepts multiple dates (yyyy-MM-dd) as comma-separated values, or TXT file containing list of dates (yyyy-MM-dd)")] string h,
-            [Option("t", "Timezone    - Accepts standard Timezone Names i.e. \"New Zealand Standard Time\", \"Central Standard Time\"")] string t,
+            [Option("c", "Calendar(s)   - Accepts single URL, or TXT file containing list of URLs")] string c,
+            [Option("m", "Month         - Accepts month, or if none provided, the current month will be used.")] int m,
+            [Option("h", "Holiday(s)    - Accepts multiple dates (yyyy-MM-dd) as comma-separated values, or TXT file containing list of dates (yyyy-MM-dd)")] string h,
+            [Option("t", "Timezone      - Accepts standard Timezone Names i.e. \"New Zealand Standard Time\", \"Central Standard Time\"")] string t,
+            [Option("s", "ShiftStartsAt - The time when their shift starts")] int s,
             [Option("a", "Attendee(s)   - Accepts single email or TXT file contains list of emails")] string a = "",
-            [Option("r", "ReportType  - AttendeeSummary | AttendeeSummaryVerbose")] ReportType r = ReportType.AttendeeSummary,
+            [Option("r", "ReportType    - AttendeeSummary | AttendeeSummaryVerbose")] ReportType r = ReportType.AttendeeSummary,
             [Option("refresh", "Refresh calendars - retrieve *ICS files from URLs again")] bool refresh = false)
         {
             // retrieve data
@@ -39,6 +40,7 @@ namespace CalendarQuery
             var month = m == 0 ? DateTime.Today.Month : m;
             var filePath = GetFilePath(month);
             var timezone = t;
+            var shiftHour = s;
             
             // save data
             await icsFiles.WriteToDiskAsync(filePath, refresh);
@@ -52,7 +54,7 @@ namespace CalendarQuery
                 .SelectMany(i => i.Value.Events)
                 .Where(i => i.FilterByMonth(month))
                 .Where(i => i.FilterByAttendees(attendees))
-                .Select(i => new RosteredEvent(i, month, holidays, timezone))
+                .Select(i => new RosteredEvent(i, month, holidays, timezone, shiftHour))
                 .GroupBy(i => i.Attendees)
                 .Select(attendeeEvents => new AttendeeSummary(attendeeEvents.Key, attendeeEvents))
                 .OrderBy(i => i.CalendarName)
