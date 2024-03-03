@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using CalendarQuery.Extensions;
 using Ical.Net.DataTypes;
@@ -88,6 +89,27 @@ namespace CalendarQuery.Tests
             var dates = DateTime.Parse(dt).GetDates(days);
             var weekdayCount = dates.AreWeekdays().Count();
             Assert.That(weekdayCount, Is.EqualTo(expectedWeekdayCount));
+        }
+
+        [TestCase("23 Feb 2024 13:00","24 Feb 2024 10:00", 0, 1)]
+        [TestCase("24 Feb 2024 10:00","26 Feb 2024 00:00", 0, 1)]
+        [TestCase("19 Feb 2024 00:00","23 Feb 2024 13:00", 5, 0)]
+        [TestCase("19 Feb 2024 00:00","26 Feb 2024 00:00", 5, 2)]
+        [TestCase("26 Feb 2024 10:00","01 Mar 2024 10:00", 4, 0)]
+        public void GetMidnights_CalculatesWeekdaysAndWeekendsCorrectly(
+            string start, string end, 
+            int expectedWeekDays, int expectedWeekends)
+        {
+            var startDate = DateTime.ParseExact(start, "dd MMM yyyy HH:mm", new CultureInfo("en-NZ"));
+            var endDate = DateTime.ParseExact(end, "dd MMM yyyy HH:mm", new CultureInfo("en-NZ"));
+            
+            var result = RosteredEventExtensions.GetMidnights(startDate, endDate);
+
+            var weekdays = result.AreWeekdays().Count();
+            var weekends = result.AreWeekends().Count();
+            
+            Assert.That(weekdays, Is.EqualTo(expectedWeekDays));
+            Assert.That(weekends, Is.EqualTo(expectedWeekends));
         }
     }
 }

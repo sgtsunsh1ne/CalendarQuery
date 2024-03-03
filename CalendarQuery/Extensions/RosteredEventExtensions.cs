@@ -52,5 +52,31 @@ namespace CalendarQuery.Extensions
                     DayOfWeek.Sunday)
                 .Select(i => i.ToString("yyyy-MM-dd"));
         }
+
+        public static List<DateTime> GetMidnights(DateTime start, DateTime end)
+        {
+            var midnights = new List<DateTime>();
+
+            var d = start;
+            while (d < end)
+            {
+                var isMidnight = d.TimeOfDay == TimeSpan.Zero;
+                if (isMidnight)
+                {
+                    midnights.Add(d);
+                }
+
+                var x = d.AddDays(1);
+                
+                d = new DateTime(
+                    x.Year,
+                    x.Month,
+                    x.Day,
+                    0, 0, 0
+                );
+            }
+
+            return midnights;
+        }
     }
 }
