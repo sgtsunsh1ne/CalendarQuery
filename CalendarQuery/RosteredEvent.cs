@@ -12,24 +12,21 @@ namespace CalendarQuery
         private readonly int _month;
         private readonly IEnumerable<DateTime> _holidays;
         private readonly string _timezone;
-        private readonly int _shiftHour;
         
         public RosteredEvent(
             CalendarEvent calendarEvent, 
             int month, 
             IEnumerable<DateTime> holidays,
-            string timezone,
-            int shiftHour)
+            string timezone)
         {
             _calendarEvent = calendarEvent;
             _month = month;
             _holidays = holidays;
             _timezone = timezone;
-            _shiftHour = shiftHour;
         }
 
-        public string CalendarName     => _calendarEvent.Calendar.Name;
-        public string Attendees        => _calendarEvent.Attendees.SanitiseAttendees();
+        public string CalendarName => _calendarEvent.Calendar.Name;
+        public string Attendees => _calendarEvent.Attendees.SanitiseAttendees();
 
         public DateTime StartDateLocal => TimeZoneInfo
             .ConvertTimeFromUtc(_calendarEvent.Start.AsUtc, TimeZoneInfo.FindSystemTimeZoneById(_timezone));
@@ -55,9 +52,9 @@ namespace CalendarQuery
                         EndDateLocal.Year,
                         EndDateLocal.Month,
                         1,
-                        _shiftHour,
-                        0,
-                        0);
+                        StartDateLocal.Hour,
+                        StartDateLocal.Minute,
+                        StartDateLocal.Second);
 
                     return firstDayOfCurrentMonth;
                 }
@@ -77,16 +74,14 @@ namespace CalendarQuery
                 if (endMonthFallsOutsideOfCurrentMonth)
                 {
                     var nextMonth = StartDateLocal.AddMonths(1);
-
-                    var startHour = EndDateLocal.Hour < _shiftHour ? EndDateLocal.Hour : _shiftHour;
                     
                     var firstDayOfNextMonth = new DateTime(
                         nextMonth.Year,
                         nextMonth.Month,
                         1,
-                        startHour,
-                        0,
-                        0);
+                        EndDateLocal.Hour,
+                        EndDateLocal.Minute,
+                        EndDateLocal.Second);
 
                     return firstDayOfNextMonth;
                 }
@@ -97,9 +92,9 @@ namespace CalendarQuery
 
         public TimeSpan AdjustedDuration => AdjustedEndDateLocal.Subtract(AdjustedStartDateLocal);
         public TimeSpan AdjustedDurationToNearestDay => AdjustedDuration.RoundToNearestDay();
-        public int WeekdayCount          => Weekdays.Count() - WeekdayHolidays.Count();
-        public int WeekendCount          => Weekends.Count() - WeekendHolidays.Count();
-        public int PublicHolidayCount    => WeekdayHolidays.Count() + WeekendHolidays.Count();
+        public int WeekdayCount => Weekdays.Count() - WeekdayHolidays.Count();
+        public int WeekendCount => Weekends.Count() - WeekendHolidays.Count();
+        public int PublicHolidayCount => WeekdayHolidays.Count() + WeekendHolidays.Count();
             
         public bool StartedAfterMidday   => AdjustedStartDateLocal > new DateTime(
                                                 AdjustedStartDateLocal.Year,
