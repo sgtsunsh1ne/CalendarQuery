@@ -95,48 +95,9 @@ namespace CalendarQuery
         public int WeekdayCount => Weekdays.Count() - WeekdayHolidays.Count();
         public int WeekendCount => Weekends.Count() - WeekendHolidays.Count();
         public int PublicHolidayCount => WeekdayHolidays.Count() + WeekendHolidays.Count();
-            
-        public bool StartedAfterMidday   => AdjustedStartDateLocal > new DateTime(
-                                                AdjustedStartDateLocal.Year,
-                                                AdjustedStartDateLocal.Month,
-                                                AdjustedStartDateLocal.Day,
-                                                12, 
-                                                0, 
-                                                0);
-
-        private IEnumerable<DateTime> DaysWorked
-        {
-            get
-            {
-                // Bug Fix to handle scenario where people start their shift after 12pm
-                //
-                // To qualify for working on a given day, they have to work at least 12 hours.
-                //
-                // E.g. If person starts working anytime _after_ Sunday 12 PM, then
-                //      (1) Exclude Sunday as their DayWorked (they don't get the weekend)
-                //      (2) Start counting from Monday
-                //
-                // E.g. If person's shift starts at 10PM, that day is excluded from DaysWorked.
-                
-                if (StartedAfterMidday)
-                {
-                    var newStartDate = AdjustedStartDateLocal.AddDays(1);
-                    var dt = new DateTime(
-                        newStartDate.Year,
-                        newStartDate.Month,
-                        newStartDate.Day,
-                        0, 
-                        0, 
-                        0);
-                    
-                    return dt.GetDates(AdjustedDurationToNearestDay.Days);
-                }
-                
-                return AdjustedStartDateLocal.GetDates(AdjustedDurationToNearestDay.Days);
-            }
-        }
-        private IEnumerable<string> Weekdays        => DaysWorked.AreWeekdays();
-        private IEnumerable<string> Weekends        => DaysWorked.AreWeekends();
+        public List<DateTime> Midnights => RosteredEventExtensions.GetMidnights(AdjustedStartDateLocal, AdjustedEndDateLocal);
+        private IEnumerable<string> Weekdays => Midnights.AreWeekdays();
+        private IEnumerable<string> Weekends => Midnights.AreWeekends();
         private IEnumerable<string> WeekdayHolidays => _holidays.AreWeekdays().Intersect(Weekdays);
         private IEnumerable<string> WeekendHolidays => _holidays.AreWeekends().Intersect(Weekends);
     }

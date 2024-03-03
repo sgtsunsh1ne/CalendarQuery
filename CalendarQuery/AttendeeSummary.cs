@@ -39,11 +39,6 @@ namespace CalendarQuery
                     notes = "Events overlap.  Counts may be wrong.\n";
                 }
 
-                if (RosteredEventsContainsEventsThatStartAfterMidday)
-                {
-                    notes += $"Attendee has shifts that start after midday.  Their first day may be excluded from the count.\n";
-                }
-
                 return notes;
             }
         }
@@ -66,14 +61,6 @@ namespace CalendarQuery
                 }
 
                 return false;
-            }
-        }
-
-        private bool RosteredEventsContainsEventsThatStartAfterMidday
-        {
-            get
-            {
-                return RosteredEvents.Any(i => i.StartedAfterMidday);
             }
         }
     }
