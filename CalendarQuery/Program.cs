@@ -47,9 +47,42 @@ namespace CalendarQuery
             var fileContents = await filePath.GetFileContentsAsync();
             
             // process data
-            var attendeeSummaryReport = fileContents
-                .GetCalendars()
-                .SelectMany(i => i.Value.Events)
+            var calendars = fileContents.GetCalendars();
+
+            Console.WriteLine($"{calendars.Count} calendar(s) found.");
+
+            foreach (var calendar in calendars)
+            {
+                var calendarEvents = calendar.Value.Events.Where(i => i.FilterByMonth(month)).ToList();
+                
+                Console.WriteLine($"{calendar.Value.Name}");
+            
+                var rosteredEvents = calendarEvents
+                    .Select(i => new RosteredEvent(i, month, holidays, timezone));
+                
+                var midnightsTotal = 0;
+            
+                foreach (var re in rosteredEvents)
+                {
+                    if (re.Midnights.Count == 0) continue;
+                    
+                    Console.WriteLine(
+                        $"{re.AdjustedStartDateLocal:dd MMM yyyy HH:mm:ss}, " +
+                        $"{re.AdjustedEndDateLocal:dd MMM yyyy HH:mm:ss}, " +
+                        $"{re.WeekdayCount} + " +
+                        $"{re.WeekendCount} + " +
+                        $"{re.PublicHolidayCount} = " +
+                        $"{re.WeekdayCount + re.WeekendCount + re.PublicHolidayCount}, " +
+                        $"{re.Attendees}");
+            
+                    midnightsTotal += re.Midnights.Count;
+                }
+                
+                Console.WriteLine($"{midnightsTotal} Total Days");
+                Console.WriteLine(string.Empty);
+            }
+            
+            var result = calendars.SelectMany(i => i.Value.Events)
                 .Where(i => i.FilterByMonth(month))
                 .Where(i => i.FilterByAttendees(attendees))
                 .Select(i => new RosteredEvent(i, month, holidays, timezone))
@@ -60,8 +93,7 @@ namespace CalendarQuery
                 .ToList();
             
             // report data
-            attendeeSummaryReport.WriteToConsole();
-            attendeeSummaryReport.WriteToCsv(r, $"{filePath}/{r}-{DateTime.Now:yyyyMMddHHmmss}.csv");
+            result.WriteToCsv(r, $"{filePath}/{r}-{DateTime.Now:yyyyMMddHHmmss}.csv");
         }
 
         private static string GetFilePath(int month)
